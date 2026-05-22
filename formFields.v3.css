@@ -840,6 +840,21 @@
     animation: formFadeIn 0.22s var(--form-ease);
 }
 
+/* Tick icon shown on the right side of CheckboxField / RadioField when active */
+.ff-field-action-tick {
+    flex-shrink: 0;
+    margin-left: auto;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    color: var(--form-success-text);
+    animation: formFadeIn 0.22s var(--form-ease);
+}
+
+
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    PHONE FIELD
