@@ -1,0 +1,4950 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FORM COMPONENT SYSTEM — v3
+   Aggressive · Accessible · Animated · Themeable via CSS Variables
+
+   Changelog v3:
+   ✅ NEW  — CheckboxField single (.ff-checkbox-single)
+   ✅ NEW  — RadioField single (.ff-radio-single)
+   ✅ NEW  — Floating label system (.ff--floating / .ff-label--floating)
+   ✅ NEW  — Fieldset + legend wrapper (.ff-fieldset / .ff-fieldset-legend)
+   ✅ NEW  — ColorPickerField TextField-style restyle
+   ✅ NEW  — .ff-color-field-wrap, .ff-color-swatches-inline, .ff-color-hex-row
+   ✅ NEW  — .ff-color-trigger-btn, .ff-color-hex-input-inline, .ff-color-hex-input-main
+   ✅ NEW  — .ff-color-rgb-badge (inline RGB breakdown in right icon slot)
+
+   Changelog v2:
+   ✅ FIX  — Video picker: controls attribute applied → videos now play
+   ✅ FIX  — z-index: 9999 on dropdowns + .ff--dropdown-open on parent
+   ✅ FIX  — Removed broken .ff-input:disabled typo from TextArea className
+   ✅ FIX  — useFilePicker input.value reset → same file re-selectable
+   ✅ FIX  — previewMap sync (Object URL cleanup on remove + external reset)
+   ✅ NEW  — @keyframes ffTypingSlide + .ff-typing-bar animation
+   ✅ NEW  — PhoneField styles (.ff-phone-wrap / .ff-phone-code / .ff-phone-number)
+   ✅ NEW  — EmailField valid indicator (.ff-email-valid-icon)
+   ✅ NEW  — Single-file/image/video prominent preview (.ff-single-preview)
+   ✅ NEW  — Textarea footer row: word count + char count (.ff-textarea-footer)
+   ✅ NEW  — Switch left position (.ff-switch-row--left)
+   ✅ NEW  — Tag suggestion pill (.ff-tag-suggestion)
+   ✅ NEW  — File list wrapper (.ff-file-list)
+   ✅ DESIGN — Stronger glows, crisper 1.5px borders, bolder accent palette
+═══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+
+    /* ─── Surface ─────────────────────────────────────────────────────────── */
+    --form-surface-1: #0d0d10;
+    --form-surface-2: #141418;
+    --form-surface-3: #1c1c22;
+    --form-surface-4: #252530;
+
+    /* ─── Border ──────────────────────────────────────────────────────────── */
+    --form-border: rgba(255, 255, 255, 0.10);
+    --form-border-hover: rgba(255, 255, 255, 0.22);
+    --form-border-focus: #d4a843;
+    --form-border-error: rgba(248, 113, 113, 0.45);
+
+    /* ─── Text ────────────────────────────────────────────────────────────── */
+    --form-text-primary: #f2eeea;
+    --form-text-secondary: #bab6b0;
+    --form-text-muted: #72706b;
+    --form-text-placeholder: #4e4c48;
+
+    /* ─── Accent / Gold ───────────────────────────────────────────────────── */
+    --form-accent: #d4a843;
+    --form-accent-bright: #f0cc5e;
+    --form-accent-dim: rgba(212, 168, 67, 0.18);
+    --form-accent-glow: rgba(212, 168, 67, 0.12);
+
+    /* ─── Radius ──────────────────────────────────────────────────────────── */
+    --form-radius-xs: 6px;
+    --form-radius-sm: 8px;
+    --form-radius-md: 12px;
+    --form-radius-lg: 16px;
+    --form-radius-xl: 20px;
+    --form-radius-pill: 999px;
+
+    /* ─── Transitions ─────────────────────────────────────────────────────── */
+    --form-duration: 180ms;
+    --form-duration-slow: 320ms;
+    --form-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --form-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* ─── Shadow / Focus — aggressive double-ring glow ───────────────────── */
+    --form-shadow-focus:
+        0 0 0 3px rgba(212, 168, 67, 0.28),
+        0 0 28px rgba(212, 168, 67, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    --form-shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.30);
+    --form-shadow-dropdown:
+        0 24px 64px rgba(0, 0, 0, 0.65),
+        0 6px 24px rgba(0, 0, 0, 0.32),
+        0 0 0 1px rgba(255, 255, 255, 0.07);
+
+    /* ─── Error ───────────────────────────────────────────────────────────── */
+    --form-error-text: #f87171;
+    --form-error-bg: rgba(248, 113, 113, 0.08);
+    --form-error-border: rgba(248, 113, 113, 0.28);
+    --form-error-glow: rgba(248, 113, 113, 0.16);
+    --form-shadow-error:
+        0 0 0 3px var(--form-error-glow),
+        0 0 24px rgba(248, 113, 113, 0.10);
+
+    /* ─── Info / Helper ───────────────────────────────────────────────────── */
+    --form-info-text: #a78bfa;
+    --form-info-bg: rgba(167, 139, 250, 0.07);
+    --form-info-border: rgba(167, 139, 250, 0.16);
+
+    /* ─── Success ─────────────────────────────────────────────────────────── */
+    --form-success-text: #4ade80;
+    --form-success-bg: rgba(74, 222, 128, 0.07);
+    --form-success-border: rgba(74, 222, 128, 0.20);
+
+    /* ─── Disabled ────────────────────────────────────────────────────────── */
+    --form-disabled-opacity: 0.40;
+    --form-disabled-bg: rgba(255, 255, 255, 0.02);
+    --form-disabled-cursor: not-allowed;
+
+    /* ─── Tag ─────────────────────────────────────────────────────────────── */
+    --form-tag-bg: rgba(212, 168, 67, 0.12);
+    --form-tag-border: rgba(212, 168, 67, 0.28);
+    --form-tag-text: #f0cc5e;
+
+    /* ─── Switch ──────────────────────────────────────────────────────────── */
+    --form-switch-width: 52px;
+    --form-switch-height: 28px;
+    --form-switch-thumb: 20px;
+    --form-switch-off: rgba(255, 255, 255, 0.10);
+    --form-switch-on: var(--form-accent);
+
+    /* ─── Label ───────────────────────────────────────────────────────────── */
+    --form-label-size: 0.67rem;
+    --form-label-weight: 700;
+    --form-label-spacing: 0.10em;
+
+    /* ─── Input ───────────────────────────────────────────────────────────── */
+    --form-input-padding-x: 1rem;
+    --form-input-padding-y: 0.875rem;
+    --form-input-font-size: 0.9rem;
+    --form-input-line-height: 1.5;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes formFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes formFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes formScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.93) translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes formTagPop {
+    from {
+        opacity: 0;
+        transform: scale(0.74);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes formShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-6px);
+    }
+
+    40% {
+        transform: translateX(6px);
+    }
+
+    60% {
+        transform: translateX(-3px);
+    }
+
+    80% {
+        transform: translateX(3px);
+    }
+}
+
+@keyframes formSwitchBounce {
+    0% {
+        transform: scale(1) translateY(-50%);
+    }
+
+    40% {
+        transform: scale(0.84) translateY(-50%);
+    }
+
+    100% {
+        transform: scale(1) translateY(-50%);
+    }
+}
+
+/* NEW v2 — Typing indicator shimmer bar */
+@keyframes ffTypingSlide {
+    0% {
+        transform: translateX(-200%);
+    }
+
+    100% {
+        transform: translateX(500%);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SHARED BASE
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff {
+    width: 100%;
+    margin-bottom: 1rem;
+    position: relative;
+    animation: formFadeUp var(--form-duration-slow) var(--form-ease) both;
+}
+
+.ff:last-child {
+    margin-bottom: 0;
+}
+
+/* z-index boost when a dropdown is open (SearchableSelect, CalendarField) */
+.ff--dropdown-open {
+    z-index: 9999;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FIELD CARD — ff-card  +  ff--picker
+   ─────────────────────────────────────────────────────────────────────────────
+   Shared aggressive card treatment.
+   ff-card   → <FieldCard> wrapper component (opt-in, user-controlled)
+   ff--picker → automatically applied by Image/Video/FilePicker components
+   ─────────────────────────────────────────────────────────────────────────────
+   Visual layers (dark → light):
+     page bg (surface-1)  →  card bg (surface-2 gradient)
+     → input inside (surface-3)  → input hover (surface-4)
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Card base shell ── */
+.ff-card,
+.ff--picker {
+    position: relative;
+    background: linear-gradient(158deg, var(--form-surface-2) 0%, #18181f 100%);
+    border: 1.5px solid var(--form-border);
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration-slow) var(--form-ease),
+        background var(--form-duration-slow) var(--form-ease);
+}
+
+.ff-card {
+    padding: 1.25rem;
+    border-radius: var(--form-radius-xl);
+    margin-bottom: .66rem;
+}
+
+.ff--picker {
+    padding: 1rem;
+    border-radius: var(--form-radius-xl);
+}
+
+/* ── Top accent gold bar — grows from centre on focus ── */
+.ff-card::after,
+.ff--picker::after {
+    content: '';
+    position: absolute;
+    top: -1.5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0%;
+    height: 2px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            var(--form-accent) 28%,
+            var(--form-accent-bright) 50%,
+            var(--form-accent) 72%,
+            transparent 100%);
+    border-radius: 99px;
+    transition:
+        width 0.40s var(--form-ease-spring),
+        opacity var(--form-duration) var(--form-ease);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── Hover — subtle surface lift ── */
+.ff-card:hover:not(:focus-within),
+.ff--picker:hover:not(:focus-within) {
+    border-color: rgba(255, 255, 255, 0.17);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* ── Focus — full gold treatment ── */
+.ff-card:focus-within,
+.ff--picker:focus-within {
+    border-color: rgba(212, 168, 67, 0.52);
+    background: linear-gradient(158deg, #15151c 0%, #1b1b24 100%);
+    box-shadow:
+        0 0 0 3px rgba(212, 168, 67, 0.09),
+        0 20px 60px rgba(0, 0, 0, 0.50),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Accent bar widths (fields → narrow, pickers → wider zone) */
+.ff-card:focus-within::after {
+    width: 54%;
+    opacity: 1;
+}
+
+.ff--picker:focus-within::after {
+    width: 46%;
+    opacity: 1;
+}
+
+/* ── Label warms to gold on focus ── */
+.ff-card .ff-label,
+.ff--picker .ff-label {
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-card:focus-within .ff-label,
+.ff--picker:focus-within .ff-label {
+    color: rgba(212, 168, 67, 0.65);
+}
+
+/* ── Error border on card ── */
+.ff-card:has(.ff-message--error),
+.ff-card:has(.ff-field-errors),
+.ff--picker:has(.ff-file-errors),
+.ff--picker:has(.ff-field-errors) {
+    border-color: var(--form-error-border);
+    box-shadow:
+        0 0 0 3px rgba(248, 113, 113, 0.06),
+        0 8px 28px rgba(0, 0, 0, 0.30);
+}
+
+/* ── Inputs inside cards — elevated bg for visual hierarchy ── */
+.ff-card .ff-input,
+.ff-card .ff-select,
+.ff-card .ff-textarea,
+.ff--picker .ff-input,
+.ff--picker .ff-select,
+.ff--picker .ff-textarea {
+    background: var(--form-surface-3);
+}
+
+.ff-card .ff-input:hover:not(:disabled):not(.ff-input--error),
+.ff-card .ff-select:hover:not(:disabled):not(.ff-select--error),
+.ff-card .ff-textarea:hover:not(:disabled):not(.ff-textarea--error),
+.ff--picker .ff-input:hover:not(:disabled):not(.ff-input--error),
+.ff--picker .ff-select:hover:not(:disabled):not(.ff-select--error),
+.ff--picker .ff-textarea:hover:not(:disabled):not(.ff-textarea--error) {
+    background: var(--form-surface-4);
+    border-color: var(--form-border-hover);
+}
+
+.ff-card .ff-input:focus,
+.ff-card .ff-select:focus,
+.ff-card .ff-textarea:focus,
+.ff--picker .ff-input:focus,
+.ff--picker .ff-select:focus,
+.ff--picker .ff-textarea:focus {
+    background: var(--form-surface-4);
+}
+
+/* ── Fields stacked inside FieldCard — tighten gap ── */
+.ff-card>.ff {
+    margin-bottom: 0.75rem;
+}
+
+.ff-card>.ff:last-child {
+    margin-bottom: 0;
+}
+
+/* ── FieldCard optional header (title + description) ── */
+.ff-card-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--form-border);
+}
+
+.ff-card-title {
+    margin: 0 0 0.2rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--form-text-secondary);
+}
+
+.ff-card-desc {
+    margin: 0;
+    font-size: 0.76rem;
+    color: var(--form-text-muted);
+    line-height: 1.5;
+}
+
+/* ── ff--picker specific overrides (picker-zone nested styles) ── */
+.ff--picker:has(.ff-file-errors),
+.ff--picker:has(.ff-field-errors) {
+    border-color: var(--form-error-border);
+}
+
+.ff--picker .ff-label-row {
+    margin-bottom: 0.75rem;
+}
+
+.ff--picker .ff-file-zone {
+    border-radius: var(--form-radius-lg);
+}
+
+.ff--picker .ff-sp-card {
+    border-radius: var(--form-radius-lg);
+}
+
+.ff--picker .ff-media-list {
+    margin-top: 0.6rem;
+}
+
+.ff--picker .ff-file-errors,
+.ff--picker .ff-field-errors {
+    margin-top: 0.55rem;
+}
+
+
+/* ─── Label ─────────────────────────────────────────────────────────────── */
+
+.ff-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 0.5rem;
+    color: var(--form-text-muted);
+    font-size: var(--form-label-size);
+    font-weight: var(--form-label-weight);
+    letter-spacing: var(--form-label-spacing);
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.ff-required {
+    color: var(--form-accent);
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+/* ─── Label row — label + inline metadata (e.g. "max 8 files · 5 MB each · images only") ── */
+
+.ff-label-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    margin-bottom: 0.55rem;
+    flex-wrap: wrap;
+}
+
+/* When label is inside a label-row, remove its own bottom margin */
+.ff-label-row .ff-label {
+    margin-bottom: 0;
+}
+
+/* Muted metadata chips — file count, size, type */
+.ff-label-meta {
+    font-size: 0.67rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--form-text-muted);
+    text-transform: none;
+    line-height: 1.2;
+    /* keep it on the same baseline row as the label */
+    align-self: center;
+}
+
+
+/* ─── Input Wrapper ─────────────────────────────────────────────────────── */
+
+.ff-input-wrap {
+    position: relative;
+    width: 100%;
+}
+
+
+/* ─── Base Input / Select / Textarea ────────────────────────────────────── */
+
+.ff-input,
+.ff-select,
+.ff-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--form-input-padding-y) var(--form-input-padding-x);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    background: var(--form-surface-2);
+    color: var(--form-text-primary);
+    font-size: var(--form-input-font-size);
+    font-family: inherit;
+    line-height: var(--form-input-line-height);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease);
+}
+
+.ff-input::placeholder,
+.ff-textarea::placeholder {
+    color: var(--form-text-placeholder);
+}
+
+.ff-input:hover:not(:disabled):not(.ff-input--error),
+.ff-select:hover:not(:disabled):not(.ff-select--error),
+.ff-textarea:hover:not(:disabled):not(.ff-textarea--error) {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-input:focus,
+.ff-select:focus,
+.ff-textarea:focus {
+    border-color: var(--form-border-focus);
+    background: var(--form-surface-3);
+    box-shadow: var(--form-shadow-focus);
+}
+
+/* ─── Error State ───────────────────────────────────────────────────────── */
+
+.ff-input--error,
+.ff-select--error,
+.ff-textarea--error {
+    border-color: var(--form-border-error) !important;
+    background: var(--form-error-bg);
+    box-shadow: var(--form-shadow-error);
+    animation: formShake 0.4s var(--form-ease);
+}
+
+.ff-input--error:focus,
+.ff-select--error:focus,
+.ff-textarea--error:focus {
+    box-shadow:
+        0 0 0 3px var(--form-error-glow),
+        0 0 32px rgba(248, 113, 113, 0.12);
+}
+
+/* ─── Disabled ──────────────────────────────────────────────────────────── */
+
+.ff-input:disabled,
+.ff-select:disabled,
+.ff-textarea:disabled {
+    opacity: var(--form-disabled-opacity);
+    background: var(--form-disabled-bg);
+    cursor: var(--form-disabled-cursor);
+    pointer-events: none;
+}
+
+/* ─── Readonly ──────────────────────────────────────────────────────────── */
+
+.ff-input[readonly],
+.ff-textarea[readonly] {
+    background: var(--form-surface-3);
+    color: var(--form-text-secondary);
+    cursor: default;
+}
+
+.ff-input[readonly]:focus,
+.ff-textarea[readonly]:focus {
+    border-color: var(--form-border-hover);
+    box-shadow: none;
+}
+
+/* ─── Icon Slots ────────────────────────────────────────────────────────── */
+
+.ff-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--form-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-icon--left {
+    left: 14px;
+}
+
+.ff-icon--right {
+    right: 14px;
+}
+
+.ff-icon--clickable {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.ff-icon--clickable:hover {
+    color: var(--form-text-secondary);
+}
+
+.ff-input-wrap:focus-within .ff-icon {
+    color: var(--form-accent);
+}
+
+.ff-input--has-left {
+    padding-left: 2.75rem;
+}
+
+.ff-input--has-right {
+    padding-right: 2.75rem;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   NEW v2 — TYPING INDICATOR BAR
+   Slim shimmer line at the bottom of any input while the user is typing.
+   Positioned absolutely inside .ff-input-wrap (position: relative).
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-typing-bar {
+    position: absolute;
+    bottom: 2px;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+    border-radius: 1px;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 250ms var(--form-ease);
+    z-index: 3;
+}
+
+.ff-typing-bar--active {
+    opacity: 1;
+}
+
+.ff-typing-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 35%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            var(--form-accent) 40%,
+            var(--form-accent-bright) 60%,
+            transparent 100%);
+    animation: ffTypingSlide 0.88s ease-in-out infinite;
+}
+
+/* Textarea variant — inside ff-textarea-wrap */
+.ff-typing-bar--textarea {
+    bottom: 4px;
+    left: 12px;
+    right: 12px;
+}
+
+/* Phone field variant — spans the full ff-phone-wrap */
+.ff-typing-bar--phone {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 0 0 var(--form-radius-md) var(--form-radius-md);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MESSAGES
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin-top: 0.45rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--form-radius-sm);
+    font-size: 0.73rem;
+    font-weight: 500;
+    line-height: 1.5;
+    animation: formFadeIn 0.2s var(--form-ease);
+}
+
+.ff-message-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.ff-message--helper {
+    background: var(--form-info-bg);
+    border: 1px solid var(--form-info-border);
+    color: var(--form-info-text);
+}
+
+.ff-message--error {
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.13), rgba(127, 29, 29, 0.22));
+    border: 1px solid var(--form-error-border);
+    color: var(--form-error-text);
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(248, 113, 113, 0.08);
+}
+
+.ff-message--success {
+    background: var(--form-success-bg);
+    border: 1px solid var(--form-success-border);
+    color: var(--form-success-text);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FILE PICKER ERRORS — grouped per-file + atomic error block
+   Matches SS: one shared dark-red wrapper, each row "× filename — message"
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ff-field-errors: generic version used by FormFieldErrors (all fields)
+   ff-file-errors:  used by FilePickerErrors (picker internals) — same visual */
+.ff-field-errors,
+.ff-file-errors {
+    margin-top: 0.6rem;
+    border-radius: var(--form-radius-md);
+    border: 1px solid var(--form-error-border);
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.10), rgba(127, 29, 29, 0.18));
+    box-shadow: 0 4px 16px rgba(248, 113, 113, 0.06);
+    overflow: hidden;
+    animation: formFadeIn 0.2s var(--form-ease);
+}
+
+.ff-field-errors-row,
+.ff-file-errors-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.73rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--form-error-text);
+    border-bottom: 1px solid rgba(248, 113, 113, 0.10);
+}
+
+.ff-field-errors-row:last-child,
+.ff-file-errors-row:last-child {
+    border-bottom: none;
+}
+
+.ff-field-errors-x,
+.ff-file-errors-x {
+    flex-shrink: 0;
+    font-weight: 700;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    opacity: 0.85;
+}
+
+.ff-field-errors-text,
+.ff-file-errors-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.ff-field-errors-filename,
+.ff-file-errors-filename {
+    font-weight: 700;
+    color: var(--form-error-text);
+}
+
+.ff-field-errors-dash,
+.ff-file-errors-dash {
+    opacity: 0.6;
+}
+
+/* Inside .ff card, remove the extra top margin (card padding handles it) */
+.ff .ff-field-errors {
+    margin-top: 0.5rem;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CHARACTER COUNT / WORD COUNT
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-char-count {
+    font-size: 0.7rem;
+    color: var(--form-text-muted);
+    font-variant-numeric: tabular-nums;
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-char-count--near {
+    color: var(--form-accent);
+}
+
+.ff-char-count--over {
+    color: var(--form-error-text);
+    font-weight: 600;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   EMAIL FIELD — validation check icon
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-email-valid-icon {
+    color: var(--form-success-text) !important;
+    animation: formFadeIn 0.22s var(--form-ease);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PHONE FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-phone-wrap {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    background: var(--form-surface-2);
+    overflow: hidden;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-phone-wrap:hover {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-phone-wrap:focus-within {
+    border-color: var(--form-border-focus);
+    background: var(--form-surface-3);
+    box-shadow: var(--form-shadow-focus);
+}
+
+.ff-phone-wrap--error {
+    border-color: var(--form-border-error) !important;
+    background: var(--form-error-bg);
+    box-shadow: var(--form-shadow-error);
+    animation: formShake 0.4s var(--form-ease);
+}
+
+/* Phone icon on the left */
+.ff-phone-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px 0 14px;
+    color: var(--form-text-muted);
+    flex-shrink: 0;
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-phone-wrap:focus-within .ff-phone-icon {
+    color: var(--form-accent);
+}
+
+/* Country code input — narrow, right-aligned, gold accent */
+.ff-phone-code {
+    width: 60px;
+    flex-shrink: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--form-accent-bright);
+    font-size: var(--form-input-font-size);
+    font-family: inherit;
+    font-weight: 700;
+    padding: var(--form-input-padding-y) 0;
+    text-align: center;
+    letter-spacing: 0.03em;
+}
+
+.ff-phone-code::placeholder {
+    color: var(--form-text-placeholder);
+    font-weight: 400;
+}
+
+/* Vertical divider between code and number */
+.ff-phone-divider {
+    width: 1.5px;
+    background: var(--form-border);
+    flex-shrink: 0;
+    margin: 10px 0;
+    border-radius: 1px;
+    transition: background var(--form-duration) var(--form-ease);
+}
+
+.ff-phone-wrap:focus-within .ff-phone-divider {
+    background: rgba(212, 168, 67, 0.25);
+}
+
+/* Phone number text input — fills remaining space */
+.ff-phone-number {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--form-text-primary);
+    font-size: var(--form-input-font-size);
+    font-family: inherit;
+    padding: var(--form-input-padding-y) var(--form-input-padding-x);
+}
+
+.ff-phone-number::placeholder {
+    color: var(--form-text-placeholder);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PASSWORD FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--form-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: var(--form-radius-xs);
+    transition:
+        color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+    z-index: 2;
+}
+
+.ff-password-toggle:hover {
+    color: var(--form-text-secondary);
+    background: var(--form-surface-4);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TEXTAREA FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Wrapper gives typing-bar a positioning context */
+.ff-textarea-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.ff-textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.65;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+}
+
+/* Footer bar: word count + reading time left, char count right */
+.ff-textarea-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+    padding: 0.32rem 0.9rem;
+    background: var(--form-surface-3);
+    border: 1.5px solid var(--form-border);
+    border-top: none;
+    border-radius: 0 0 var(--form-radius-md) var(--form-radius-md);
+}
+
+.ff-textarea-wrap .ff-textarea {
+    border-radius: var(--form-radius-md) var(--form-radius-md) 0 0;
+}
+
+.ff-textarea-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.ff-textarea-footer-dot {
+    color: var(--form-text-muted);
+    font-size: 0.65rem;
+    opacity: 0.5;
+}
+
+.ff-reading-time {
+    font-size: 0.68rem;
+    color: var(--form-accent);
+    font-variant-numeric: tabular-nums;
+    font-style: italic;
+    opacity: 0.85;
+}
+
+.ff-word-count {
+    font-size: 0.69rem;
+    color: var(--form-text-muted);
+    font-style: italic;
+    font-variant-numeric: tabular-nums;
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   NUMBER FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-number-wrap {
+    display: flex;
+    align-items: stretch;
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    background: var(--form-surface-2);
+    overflow: hidden;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-number-wrap:focus-within {
+    border-color: var(--form-border-focus);
+    box-shadow: var(--form-shadow-focus);
+}
+
+.ff-number-wrap--error {
+    border-color: var(--form-border-error) !important;
+    box-shadow: var(--form-shadow-error);
+}
+
+.ff-number-input {
+    flex: 1;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1rem;
+    -moz-appearance: textfield;
+}
+
+.ff-number-input::-webkit-inner-spin-button,
+.ff-number-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.ff-number-input:focus {
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.ff-number-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    background: var(--form-surface-3);
+    border: none;
+    color: var(--form-text-muted);
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease);
+}
+
+.ff-number-btn:hover:not(:disabled) {
+    background: var(--form-surface-4);
+    color: var(--form-accent-bright);
+}
+
+.ff-number-btn:active:not(:disabled) {
+    background: var(--form-accent-dim);
+}
+
+.ff-number-btn:disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+.ff-number-btn--dec {
+    border-right: 1.5px solid var(--form-border);
+}
+
+.ff-number-btn--inc {
+    border-left: 1.5px solid var(--form-border);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SELECT FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-select-wrap {
+    position: relative;
+}
+
+.ff-select {
+    padding-right: 2.8rem;
+    cursor: pointer;
+}
+
+.ff-select-chevron {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--form-text-muted);
+    display: flex;
+    align-items: center;
+    z-index: 2;
+    transition:
+        transform var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease);
+}
+
+.ff-select-wrap:focus-within .ff-select-chevron {
+    color: var(--form-accent);
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.ff-select option {
+    background: var(--form-surface-2);
+    color: var(--form-text-primary);
+}
+
+.ff-select-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.65rem;
+}
+
+.ff-select-suggestion {
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--form-radius-pill);
+    border: 1px solid var(--form-border);
+    background: var(--form-surface-3);
+    color: var(--form-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-select-suggestion:hover {
+    border-color: var(--form-accent);
+    color: var(--form-accent-bright);
+    background: var(--form-accent-dim);
+    transform: translateY(-1px);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SEARCHABLE SELECT
+   FIX v2: z-index 9999 on dropdown; parent .ff gets .ff--dropdown-open
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-search-select {
+    position: relative;
+}
+
+.ff-search-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--form-input-padding-y) var(--form-input-padding-x);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    background: var(--form-surface-2);
+    color: var(--form-text-primary);
+    font-size: var(--form-input-font-size);
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-search-select-trigger:hover {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-search-select-trigger--open,
+.ff-search-select-trigger:focus {
+    border-color: var(--form-border-focus);
+    background: var(--form-surface-3);
+    box-shadow: var(--form-shadow-focus);
+    outline: none;
+}
+
+.ff-search-select-trigger--error {
+    border-color: var(--form-border-error) !important;
+    box-shadow: var(--form-shadow-error);
+}
+
+.ff-search-select-value {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-search-select-value--placeholder {
+    color: var(--form-text-placeholder);
+}
+
+.ff-search-select-chevron {
+    flex-shrink: 0;
+    margin-left: 10px;
+    color: var(--form-text-muted);
+    transition:
+        transform var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease);
+}
+
+.ff-search-select-trigger--open .ff-search-select-chevron {
+    transform: rotate(180deg);
+    color: var(--form-accent);
+}
+
+/* Dropdown — FIX: z-index 9999 */
+.ff-search-select-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    border-radius: var(--form-radius-lg);
+    background: var(--form-surface-2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--form-shadow-dropdown);
+    overflow: hidden;
+    animation: formScaleIn 0.18s var(--form-ease) both;
+    transform-origin: top center;
+}
+
+.ff-search-select-search-wrap {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid var(--form-border);
+}
+
+.ff-search-select-search {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.9rem;
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-sm);
+    background: var(--form-surface-3);
+    color: var(--form-text-primary);
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-search-select-search::placeholder {
+    color: var(--form-text-placeholder);
+}
+
+.ff-search-select-search:focus {
+    border-color: var(--form-border-focus);
+    box-shadow: 0 0 0 3px var(--form-accent-dim);
+}
+
+.ff-search-select-list {
+    max-height: 220px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--form-surface-4) transparent;
+}
+
+.ff-search-select-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ff-search-select-list::-webkit-scrollbar-thumb {
+    background: var(--form-surface-4);
+    border-radius: 4px;
+}
+
+.ff-search-select-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    color: var(--form-text-secondary);
+    font-size: 0.88rem;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease);
+}
+
+.ff-search-select-option:hover {
+    background: var(--form-surface-3);
+    color: var(--form-text-primary);
+}
+
+.ff-search-select-option--selected {
+    color: var(--form-accent-bright);
+    background: var(--form-accent-dim);
+}
+
+.ff-search-select-option--selected:hover {
+    background: rgba(212, 168, 67, 0.25);
+}
+
+.ff-search-select-tick {
+    color: var(--form-accent);
+    flex-shrink: 0;
+}
+
+.ff-search-select-empty {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    color: var(--form-text-muted);
+    font-size: 0.82rem;
+}
+
+.ff-search-select-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.65rem;
+}
+
+.ff-search-select-suggestion {
+    padding: 0.28rem 0.72rem;
+    border-radius: var(--form-radius-pill);
+    border: 1px solid var(--form-border);
+    background: var(--form-surface-3);
+    color: var(--form-text-secondary);
+    font-size: 0.74rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-search-select-suggestion:hover {
+    border-color: var(--form-accent);
+    color: var(--form-accent-bright);
+    background: var(--form-accent-dim);
+    transform: translateY(-1px);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   DATE / TIME — native inputs
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-input[type="date"],
+.ff-input[type="time"],
+.ff-input[type="datetime-local"] {
+    color-scheme: dark;
+}
+
+.ff-input[type="date"]::-webkit-calendar-picker-indicator,
+.ff-input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity var(--form-duration);
+}
+
+.ff-input[type="date"]::-webkit-calendar-picker-indicator:hover,
+.ff-input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CALENDAR FIELD — custom picker
+   FIX v2: z-index 9999 on panel; parent .ff gets .ff--dropdown-open
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-calendar {
+    position: relative;
+}
+
+.ff-calendar-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--form-input-padding-y) var(--form-input-padding-x);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    background: var(--form-surface-2);
+    color: var(--form-text-primary);
+    font-size: var(--form-input-font-size);
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-calendar-trigger:hover {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-calendar-trigger--open,
+.ff-calendar-trigger:focus {
+    border-color: var(--form-border-focus);
+    background: var(--form-surface-3);
+    box-shadow: var(--form-shadow-focus);
+    outline: none;
+}
+
+.ff-calendar-trigger--error {
+    border-color: var(--form-border-error) !important;
+    box-shadow: var(--form-shadow-error);
+}
+
+.ff-calendar-trigger-value--placeholder {
+    color: var(--form-text-placeholder);
+}
+
+.ff-calendar-trigger-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--form-text-muted);
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+/* Calendar panel — FIX: z-index 9999 */
+.ff-calendar-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 9999;
+    min-width: 300px;
+    border-radius: var(--form-radius-lg);
+    background: var(--form-surface-2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--form-shadow-dropdown);
+    overflow: hidden;
+    animation: formScaleIn 0.2s var(--form-ease) both;
+    transform-origin: top left;
+    padding: 1rem;
+}
+
+.ff-cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+}
+
+.ff-cal-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--form-text-primary);
+    letter-spacing: 0.02em;
+}
+
+.ff-cal-nav {
+    background: var(--form-surface-3);
+    border: 1px solid var(--form-border);
+    border-radius: var(--form-radius-xs);
+    color: var(--form-text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease),
+        border-color var(--form-duration) var(--form-ease);
+}
+
+.ff-cal-nav:hover {
+    background: var(--form-accent-dim);
+    border-color: var(--form-accent);
+    color: var(--form-accent-bright);
+}
+
+.ff-cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 0.4rem;
+}
+
+.ff-cal-weekday {
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--form-text-muted);
+    padding: 4px 0;
+    text-transform: uppercase;
+}
+
+.ff-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.ff-cal-day {
+    background: transparent;
+    border: none;
+    border-radius: var(--form-radius-xs);
+    color: var(--form-text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: inherit;
+    padding: 7px 4px;
+    text-align: center;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease);
+}
+
+.ff-cal-day:hover:not(:disabled) {
+    background: var(--form-surface-4);
+    color: var(--form-text-primary);
+}
+
+.ff-cal-day--other-month {
+    color: var(--form-text-muted);
+    opacity: 0.38;
+}
+
+.ff-cal-day--today {
+    color: var(--form-accent-bright);
+    font-weight: 700;
+}
+
+.ff-cal-day--selected {
+    background: var(--form-accent);
+    color: var(--form-surface-1) !important;
+    font-weight: 700;
+}
+
+.ff-cal-day--selected:hover {
+    background: var(--form-accent-bright);
+}
+
+.ff-cal-day--disabled {
+    opacity: 0.22;
+    cursor: var(--form-disabled-cursor);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RADIO GROUP
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-radio-group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ff-radio-group-list--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.ff-radio-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--form-radius-md);
+    border: 1.5px solid var(--form-border);
+    background: var(--form-surface-2);
+    cursor: pointer;
+    user-select: none;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-radio-item:hover:not(.ff-radio-item--disabled) {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-radio-item--selected {
+    border-color: var(--form-accent);
+    background: var(--form-accent-dim);
+    box-shadow: 0 0 0 1px var(--form-accent-dim);
+}
+
+.ff-radio-item--disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+.ff-radio-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--form-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-radio-item--selected .ff-radio-circle {
+    border-color: var(--form-accent);
+    background: var(--form-accent-dim);
+}
+
+.ff-radio-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: transparent;
+    transform: scale(0);
+    transition:
+        background var(--form-duration) var(--form-ease),
+        transform var(--form-duration) var(--form-ease-spring);
+}
+
+.ff-radio-item--selected .ff-radio-dot {
+    background: var(--form-accent-bright);
+    transform: scale(1);
+}
+
+.ff-radio-text {
+    flex: 1;
+}
+
+.ff-radio-label {
+    display: block;
+    color: var(--form-text-secondary);
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-radio-item--selected .ff-radio-label {
+    color: var(--form-accent-bright);
+}
+
+.ff-radio-description {
+    display: block;
+    color: var(--form-text-muted);
+    font-size: 0.76rem;
+    margin-top: 3px;
+    line-height: 1.4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CHECKBOX GROUP
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-checkbox-group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ff-checkbox-group-list--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.ff-checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--form-radius-md);
+    border: 1.5px solid var(--form-border);
+    background: var(--form-surface-2);
+    cursor: pointer;
+    user-select: none;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-checkbox-item:hover:not(.ff-checkbox-item--disabled) {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-checkbox-item--checked {
+    border-color: var(--form-accent);
+    background: var(--form-accent-dim);
+    box-shadow: 0 0 0 1px var(--form-accent-dim);
+}
+
+.ff-checkbox-item--disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+.ff-checkbox-box {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--form-radius-xs);
+    border: 2px solid var(--form-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-checkbox-item--checked .ff-checkbox-box {
+    border-color: var(--form-accent);
+    background: var(--form-accent);
+}
+
+.ff-checkbox-tick {
+    color: var(--form-surface-1);
+    opacity: 0;
+    transform: scale(0.6);
+    transition:
+        opacity var(--form-duration) var(--form-ease),
+        transform var(--form-duration) var(--form-ease-spring);
+}
+
+.ff-checkbox-item--checked .ff-checkbox-tick {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.ff-checkbox-label {
+    display: block;
+    color: var(--form-text-secondary);
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-checkbox-item--checked .ff-checkbox-label {
+    color: var(--form-accent-bright);
+}
+
+.ff-checkbox-description {
+    display: block;
+    color: var(--form-text-muted);
+    font-size: 0.76rem;
+    margin-top: 3px;
+    line-height: 1.4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SWITCH FIELD
+   NEW v2: .ff-switch-row--left puts the toggle before the text
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--form-radius-md);
+    border: 1.5px solid var(--form-border);
+    background: var(--form-surface-2);
+    cursor: pointer;
+    user-select: none;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-switch-row:hover {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-switch-row--on {
+    border-color: var(--form-accent);
+    background: var(--form-accent-dim);
+    box-shadow: 0 0 0 1px var(--form-accent-dim);
+}
+
+/* Switch on the LEFT side: reverse order, left-align the pair */
+.ff-switch-row--left {
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.ff-switch-row--left .ff-switch-text {
+    margin-left: 0rem;
+}
+
+.ff-switch-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+}
+
+.ff-switch-main-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--form-text-secondary);
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-switch-row--on .ff-switch-main-label {
+    color: var(--form-accent-bright);
+}
+
+.ff-switch-sub-label {
+    font-size: 0.75rem;
+    color: var(--form-text-muted);
+    line-height: 1.4;
+}
+
+/* Track */
+.ff-switch-track {
+    position: relative;
+    width: var(--form-switch-width);
+    height: var(--form-switch-height);
+    border-radius: var(--form-radius-pill);
+    background: var(--form-switch-off);
+    flex-shrink: 0;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-switch-track--on {
+    background: var(--form-switch-on);
+    box-shadow: 0 0 18px rgba(212, 168, 67, 0.30);
+}
+
+.ff-switch-track--disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+    pointer-events: none;
+}
+
+/* Thumb */
+.ff-switch-thumb {
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    width: var(--form-switch-thumb);
+    height: var(--form-switch-thumb);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.78);
+    transform: translateY(-50%);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.38);
+    transition:
+        left var(--form-duration) var(--form-ease-spring),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-switch-track--on .ff-switch-thumb {
+    left: calc(var(--form-switch-width) - var(--form-switch-thumb) - 4px);
+    background: #fff;
+    animation: formSwitchBounce 0.3s var(--form-ease-spring) both;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TAGS FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    background: var(--form-surface-2);
+    min-height: 52px;
+    cursor: text;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-tags-wrap:focus-within {
+    border-color: var(--form-border-focus);
+    background: var(--form-surface-3);
+    box-shadow: var(--form-shadow-focus);
+}
+
+.ff-tags-wrap--error {
+    border-color: var(--form-border-error) !important;
+    box-shadow: var(--form-shadow-error);
+}
+
+.ff-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.28rem 0.65rem;
+    border-radius: var(--form-radius-pill);
+    border: 1px solid var(--form-tag-border);
+    background: var(--form-tag-bg);
+    color: var(--form-tag-text);
+    font-size: 0.8rem;
+    font-weight: 600;
+    animation: formTagPop 0.18s var(--form-ease-spring);
+}
+
+.ff-tag-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(212, 168, 67, 0.20);
+    color: var(--form-tag-text);
+    cursor: pointer;
+    padding: 0;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-tag-remove:hover {
+    background: rgba(248, 113, 113, 0.26);
+    color: var(--form-error-text);
+    transform: scale(1.15);
+}
+
+.ff-tags-input {
+    flex: 1;
+    min-width: 100px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--form-text-primary);
+    font-size: var(--form-input-font-size);
+    font-family: inherit;
+    padding: 0.2rem 0;
+}
+
+.ff-tags-input::placeholder {
+    color: var(--form-text-placeholder);
+}
+
+.ff-tags-hint {
+    font-size: 0.69rem;
+    color: var(--form-text-muted);
+    margin-top: 0.3rem;
+    font-style: italic;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* NEW v2 — suggestion pill (was inline style) */
+.ff-tag-suggestion {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 2px 10px;
+    border-radius: var(--form-radius-pill);
+    border: 1px solid var(--form-tag-border);
+    background: var(--form-tag-bg);
+    color: var(--form-tag-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-style: normal;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        border-color var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-tag-suggestion:hover {
+    background: rgba(212, 168, 67, 0.24);
+    border-color: var(--form-accent-bright);
+    transform: translateY(-1px);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   URL FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-url-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.55rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--form-radius-sm);
+    background: var(--form-surface-3);
+    border: 1px solid var(--form-border);
+    text-decoration: none;
+    animation: formFadeIn 0.2s var(--form-ease);
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-url-preview:hover {
+    border-color: var(--form-accent);
+    background: var(--form-accent-dim);
+}
+
+.ff-url-favicon {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.ff-url-preview-text {
+    color: var(--form-accent-bright);
+    font-size: 0.78rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FILE / IMAGE / VIDEO PICKERS — Upload Zone
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-file-zone {
+    position: relative;
+    padding: 2.2rem 1.5rem;
+    border: 2px dashed var(--form-border);
+    border-radius: var(--form-radius-xl);
+    background: var(--form-surface-2);
+    text-align: center;
+    cursor: pointer;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-file-zone:hover,
+.ff-file-zone--drag {
+    border-color: var(--form-accent);
+    background: var(--form-surface-3);
+    box-shadow: var(--form-shadow-focus);
+}
+
+.ff-file-zone--drag {
+    box-shadow:
+        0 0 0 3px var(--form-accent-dim),
+        0 0 40px var(--form-accent-glow);
+}
+
+.ff-file-zone--error {
+    border-color: var(--form-border-error);
+    box-shadow: var(--form-shadow-error);
+}
+
+.ff-file-native {
+    display: none;
+}
+
+.ff-file-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--form-radius-md);
+    background: var(--form-accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.9rem;
+    color: var(--form-accent-bright);
+    transition: transform 200ms var(--form-ease-spring);
+}
+
+.ff-file-zone:hover .ff-file-icon {
+    transform: scale(1.14) translateY(-2px);
+}
+
+.ff-file-zone-title {
+    color: var(--form-text-primary);
+    font-size: 0.94rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.ff-file-zone-sub {
+    color: var(--form-text-muted);
+    font-size: 0.78rem;
+    margin-bottom: 1rem;
+}
+
+.ff-file-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.65rem 1.25rem;
+    border: 1.5px solid var(--form-accent);
+    border-radius: var(--form-radius-md);
+    background: var(--form-accent-dim);
+    color: var(--form-accent-bright);
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-file-btn:hover {
+    background: rgba(212, 168, 67, 0.26);
+    box-shadow: 0 0 16px rgba(212, 168, 67, 0.18);
+    transform: translateY(-1px);
+}
+
+/* Smaller variant used inside single-preview action rows */
+.ff-file-btn--sm {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+}
+
+.ff-file-info {
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    color: var(--form-text-muted);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PICKER CARD WRAPPER — ff--picker
+   Surfaces ImagePickerField / VideoPickerField / FilePickerField in one card.
+   Structure: [outer card] → label-row · zone/sp-card · list/grid · errors
+   Inherits base card (bg, border, transition) from .ff — only overrides below.
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff--picker {
+    padding: 1rem;
+    border-radius: var(--form-radius-xl);
+}
+
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SINGLE PREVIEW CARD — ff-sp-*
+   Unified design for image, video, file when multiple={false} and 1 item selected.
+
+   Structure:
+     .ff-sp-card
+       .ff-sp-thumb (image | video | file)
+       .ff-sp-footer
+         .ff-sp-meta
+         .ff-sp-actions
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Card shell ───────────────────────────────────────────────────────────── */
+
+.ff-sp-card {
+    border-radius: var(--form-radius-xl);
+    border: 1.5px solid var(--form-border);
+    background: var(--form-surface-2);
+    overflow: hidden;
+    animation: formScaleIn 0.24s var(--form-ease) both;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-sp-card:hover {
+    border-color: var(--form-border-hover);
+    box-shadow: var(--form-shadow-hover);
+}
+
+.ff-sp-card--error {
+    border-color: var(--form-border-error) !important;
+    box-shadow: var(--form-shadow-error);
+}
+
+/* ── Thumbnail area — shared base ────────────────────────────────────────── */
+
+.ff-sp-thumb {
+    width: 100%;
+    height: 210px;
+    overflow: hidden;
+    position: relative;
+    /* needed for absolutely-positioned overlays & file-visual */
+    background: var(--form-surface-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Image thumbnail ─────────────────────────────────────────────────────── */
+
+.ff-sp-thumb--image {
+    background: #000;
+}
+
+.ff-sp-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 420ms var(--form-ease);
+}
+
+.ff-sp-thumb-img.auto,
+.ff-sp-thumb-video.auto {
+    width: auto;
+    object-fit: contain;
+}
+
+.ff-sp-thumb-img.full,
+.ff-sp-thumb-video.full {
+    width: 100%;
+    object-fit: cover;
+}
+
+.ff-sp-thumb-img.contain,
+.ff-sp-thumb-video.contain {
+    width: 100%;
+    object-fit: contain;
+}
+
+.ff-sp-card:hover .ff-sp-thumb-img {
+    transform: scale(1.04);
+}
+
+/* ── Video thumbnail — intentionally no controls, just the first frame ───── */
+
+.ff-sp-thumb--video {
+    background: #000;
+}
+
+.ff-sp-thumb-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* pointer-events: none keeps the thumbnail non-interactive */
+    pointer-events: none;
+}
+
+/* Play button overlay */
+.ff-sp-video-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.32);
+    transition: background var(--form-duration) var(--form-ease);
+}
+
+.ff-sp-card:hover .ff-sp-video-overlay {
+    background: rgba(0, 0, 0, 0.20);
+}
+
+.ff-sp-play-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255, 255, 255, 0.32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition:
+        transform 220ms var(--form-ease-spring),
+        background 220ms var(--form-ease);
+}
+
+.ff-sp-card:hover .ff-sp-play-btn {
+    transform: scale(1.12);
+    background: rgba(255, 255, 255, 0.24);
+}
+
+/* ── File type visual ────────────────────────────────────────────────────── */
+
+/* Background color comes from inline style (getFileType().bg).
+   The fallback here ensures the area is always visible even if inline style fails. */
+.ff-sp-thumb--file {
+    height: 170px;
+    background: rgba(212, 168, 67, 0.18);
+    /* gold fallback */
+    /* inline style from getFileType() will override this */
+}
+
+.ff-sp-card:hover .ff-sp-thumb--file {
+    filter: brightness(1.10);
+}
+
+.ff-sp-file-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+    height: 100%;
+    /* Ensure content is always centered inside the thumb */
+    position: absolute;
+    inset: 0;
+}
+
+/* Large extension label — e.g. "PDF", "DOCX", "ZIP" */
+.ff-sp-file-ext {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    /* color set inline from getFileType() */
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* Decorative "document lines" below the ext label */
+.ff-sp-file-lines {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    opacity: 0.35;
+    /* color set inline */
+}
+
+.ff-sp-file-lines span {
+    display: block;
+    height: 3px;
+    border-radius: 99px;
+    background: currentColor;
+    /* width set inline per line */
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+
+.ff-sp-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--form-border);
+}
+
+/* ── Meta: type icon + name + size ──────────────────────────────────────── */
+
+.ff-sp-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.ff-sp-type-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--form-text-muted);
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-sp-type-icon--image {
+    color: var(--form-accent);
+}
+
+.ff-sp-type-icon--video {
+    color: #a78bfa;
+}
+
+.ff-sp-meta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    /* needed for text-overflow on child */
+}
+
+.ff-sp-name {
+    color: var(--form-text-primary);
+    font-size: 0.83rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 220px;
+}
+
+.ff-sp-size {
+    color: var(--form-text-muted);
+    font-size: 0.71rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Action buttons ──────────────────────────────────────────────────────── */
+
+.ff-sp-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-shrink: 0;
+}
+
+/* Change button — gold accent style */
+.ff-sp-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--form-radius-sm);
+    border: 1.5px solid var(--form-accent);
+    background: var(--form-accent-dim);
+    color: var(--form-accent-bright);
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-sp-change:hover:not(:disabled) {
+    background: rgba(212, 168, 67, 0.30);
+    box-shadow: 0 0 16px rgba(212, 168, 67, 0.20);
+    transform: translateY(-1px);
+}
+
+.ff-sp-change:disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+/* Remove button — compact square, red accent */
+.ff-sp-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--form-radius-sm);
+    border: 1.5px solid var(--form-error-border);
+    background: var(--form-error-bg);
+    color: var(--form-error-text);
+    cursor: pointer;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-sp-remove:hover:not(:disabled) {
+    background: rgba(248, 113, 113, 0.22);
+    box-shadow: 0 0 14px rgba(248, 113, 113, 0.16);
+    transform: translateY(-1px);
+}
+
+.ff-sp-remove:disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+    .ff-sp-thumb {
+        height: 170px;
+    }
+
+    .ff-sp-thumb--file {
+        height: 140px;
+    }
+
+    .ff-sp-file-ext {
+        font-size: 1.6rem;
+    }
+
+    .ff-sp-footer {
+        flex-wrap: wrap;
+        gap: 0.6rem;
+    }
+
+    .ff-sp-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MULTI PREVIEW GRID (image / video thumbnails)
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.ff-preview-item {
+    position: relative;
+    border-radius: var(--form-radius-md);
+    overflow: hidden;
+    border: 1.5px solid var(--form-border);
+    background: var(--form-surface-3);
+    animation: formScaleIn 0.22s var(--form-ease);
+    aspect-ratio: 1;
+    transition: border-color var(--form-duration) var(--form-ease);
+}
+
+.ff-preview-item:hover {
+    border-color: var(--form-border-hover);
+}
+
+.ff-preview-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ff-preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.60);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--form-duration) var(--form-ease);
+}
+
+.ff-preview-item:hover .ff-preview-overlay {
+    opacity: 1;
+}
+
+.ff-preview-remove {
+    background: rgba(248, 113, 113, 0.92);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 150ms var(--form-ease-spring);
+}
+
+.ff-preview-remove:hover {
+    transform: scale(1.18);
+}
+
+/* ── Video grid item — play icon always visible, remove on hover ── */
+.ff-preview-item--video .ff-preview-overlay {
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ff-preview-play-icon {
+    color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    pointer-events: none;
+    transition: opacity var(--form-duration) var(--form-ease);
+}
+
+.ff-preview-overlay--always {
+    opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.38);
+}
+
+.ff-preview-item--video:hover .ff-preview-overlay--always {
+    background: rgba(0, 0, 0, 0.60);
+}
+
+.ff-preview-item--video .ff-preview-remove {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity var(--form-duration) var(--form-ease), transform 150ms var(--form-ease-spring);
+}
+
+.ff-preview-item--video:hover .ff-preview-remove {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ── File grid card ── */
+.ff-preview-grid--file {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+.ff-preview-item--file {
+    aspect-ratio: unset;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    background: transparent;
+    border: none;
+}
+
+.ff-preview-item--file:hover {
+    border-color: transparent;
+}
+
+.ff-preview-file-card {
+    border-radius: var(--form-radius-md);
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 1rem;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: filter var(--form-duration) var(--form-ease);
+}
+
+.ff-preview-item--file:hover .ff-preview-file-card {
+    filter: brightness(1.12);
+}
+
+.ff-preview-file-card-ext {
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.ff-preview-file-card-lines {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.30;
+    width: 100%;
+}
+
+.ff-preview-file-card-lines span {
+    display: block;
+    height: 2.5px;
+    border-radius: 99px;
+    background: currentColor;
+}
+
+.ff-preview-file-card-footer {
+    padding: 0.4rem 0.2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ff-preview-file-card-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--form-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 130px;
+}
+
+.ff-preview-file-card-size {
+    font-size: 0.67rem;
+    color: var(--form-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-preview-remove--file {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity var(--form-duration) var(--form-ease), transform 150ms var(--form-ease-spring);
+}
+
+.ff-preview-item--file:hover .ff-preview-remove--file {
+    opacity: 1;
+    transform: scale(1);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FILE LIST (multi-file mode)
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-file-list {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MEDIA LIST — unified list for image, video, file multi-mode
+   Each row: [thumb] [name / ext+size] [remove]
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-media-list {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.ff-media-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.6rem 0.85rem 0.6rem 0.6rem;
+    border-radius: var(--form-radius-lg);
+    border: 1px solid var(--form-border);
+    background: var(--form-surface-3);
+    animation: formFadeUp 0.18s var(--form-ease);
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-media-list-item:hover {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-4);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
+}
+
+/* ── Thumb ── */
+.ff-media-list-thumb {
+    flex-shrink: 0;
+    width: 54px;
+    height: 54px;
+    border-radius: var(--form-radius-md);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ff-media-list-thumb--image {
+    border: 1px solid var(--form-border);
+    background: var(--form-surface-4);
+}
+
+.ff-media-list-thumb--video {
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    background: rgba(167, 139, 250, 0.08);
+}
+
+.ff-media-list-thumb--file {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ff-media-list-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ff-media-list-play-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.80);
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.ff-media-list-play-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.ff-media-list-file-ext {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+/* ── Info ── */
+.ff-media-list-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ff-media-list-name {
+    color: var(--form-text-primary);
+    font-size: 0.84rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-media-list-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ff-media-list-ext {
+    font-size: 0.63rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: var(--form-radius-xs);
+    border: 1px solid rgba(212, 168, 67, 0.35);
+    color: var(--form-accent-bright);
+    background: rgba(212, 168, 67, 0.15);
+    line-height: 1.6;
+}
+
+.ff-media-list-ext--video {
+    border-color: rgba(167, 139, 250, 0.30);
+    color: #c4b5fd;
+    background: rgba(167, 139, 250, 0.10);
+}
+
+.ff-media-list-size {
+    color: var(--form-text-muted);
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+}
+
+/* ── Remove button ── */
+.ff-media-list-remove {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--form-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transition:
+        color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+    margin-left: auto;
+}
+
+.ff-media-list-remove:hover {
+    color: var(--form-text-secondary);
+    background: rgba(255, 255, 255, 0.07);
+    transform: scale(1.12);
+}
+
+.ff-preview-file-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--form-radius-md);
+    background: var(--form-surface-3);
+    border: 1px solid var(--form-border);
+    animation: formFadeUp 0.18s var(--form-ease);
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-preview-file-item:hover {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-4);
+}
+
+.ff-preview-file-name {
+    flex: 1;
+    color: var(--form-text-secondary);
+    font-size: 0.83rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-preview-file-size {
+    color: var(--form-text-muted);
+    font-size: 0.72rem;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-preview-file-remove {
+    background: transparent;
+    border: none;
+    color: var(--form-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: var(--form-radius-xs);
+    transition:
+        color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+.ff-preview-file-remove:hover {
+    color: var(--form-error-text);
+    background: var(--form-error-bg);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 560px) {
+
+    .ff-input,
+    .ff-select,
+    .ff-textarea {
+        padding: 0.78rem 0.9rem;
+        font-size: 0.875rem;
+    }
+
+    .ff-radio-group-list--horizontal,
+    .ff-checkbox-group-list--horizontal {
+        flex-direction: column;
+    }
+
+    .ff-preview-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    }
+
+    .ff-calendar-panel {
+        min-width: unset;
+        left: 0;
+        right: 0;
+    }
+
+    .ff-message {
+        font-size: 0.7rem;
+    }
+
+    .ff-phone-wrap {
+        flex-wrap: nowrap;
+    }
+
+    .ff-single-preview--file {
+        flex-wrap: wrap;
+    }
+
+    .ff-single-preview--file .ff-single-preview-actions {
+        width: 100%;
+        margin-left: 0;
+        border-top: 1px solid var(--form-border);
+        padding-top: 0.6rem;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CHECKBOX GROUP — counter fix
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-checkbox-group-list+.ff-char-count {
+    display: block;
+    margin-top: 0.4rem;
+    padding: 0 2px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SEARCH FIELD
+   — Input + action button + popup (inner search, result count, scrollable list)
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Action button (right-side search/clear) ── */
+.ff-sf-action-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--form-radius-sm);
+    border: none;
+    background: var(--form-accent-dim);
+    color: var(--form-accent-bright);
+    cursor: pointer;
+    z-index: 2;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        transform 140ms var(--form-ease-spring);
+}
+
+.ff-sf-action-btn:hover:not(:disabled) {
+    background: rgba(212, 168, 67, 0.30);
+    box-shadow: 0 0 14px rgba(212, 168, 67, 0.18);
+    transform: translateY(-50%) scale(1.06);
+}
+
+.ff-sf-action-btn:disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+/* Increase right padding so text doesn't sit under action button */
+.ff-sf-action-btn~.ff-input,
+.ff-input.ff-input--has-right {
+    padding-right: 3.2rem;
+}
+
+/* ── Popup ── */
+.ff-sf-popup {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    border-radius: var(--form-radius-lg);
+    background: var(--form-surface-2);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: var(--form-shadow-dropdown);
+    overflow: hidden;
+    animation: formScaleIn 0.18s var(--form-ease) both;
+    transform-origin: top center;
+}
+
+/* ── Inner search bar ── */
+.ff-sf-inner-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--form-border);
+    background: var(--form-surface-3);
+    position: relative;
+}
+
+.ff-sf-inner-search-icon {
+    display: flex;
+    align-items: center;
+    color: var(--form-text-muted);
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+}
+
+.ff-sf-inner-search {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--form-text-primary);
+    font-size: 0.82rem;
+    font-family: inherit;
+    placeholder-color: var(--form-text-placeholder);
+}
+
+.ff-sf-inner-search::placeholder {
+    color: var(--form-text-placeholder);
+}
+
+.ff-sf-inner-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    color: var(--form-text-muted);
+    cursor: pointer;
+    border-radius: var(--form-radius-xs);
+    flex-shrink: 0;
+    transition: color var(--form-duration) var(--form-ease), background var(--form-duration) var(--form-ease);
+}
+
+.ff-sf-inner-clear:hover {
+    color: var(--form-error-text);
+    background: var(--form-error-bg);
+}
+
+/* ── Result count bar ── */
+.ff-sf-result-count {
+    padding: 0.3rem 1rem;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--form-text-muted);
+    border-bottom: 1px solid var(--form-border);
+    background: var(--form-surface-2);
+}
+
+/* ── Scrollable result list ── */
+.ff-sf-result-list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--form-surface-4) transparent;
+}
+
+.ff-sf-result-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ff-sf-result-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ff-sf-result-list::-webkit-scrollbar-thumb {
+    background: var(--form-surface-4);
+    border-radius: 2px;
+}
+
+/* ── Result item ── */
+.ff-sf-result-item {
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition:
+        background var(--form-duration) var(--form-ease);
+    animation: formFadeIn 0.14s var(--form-ease);
+}
+
+.ff-sf-result-item:last-child {
+    border-bottom: none;
+}
+
+.ff-sf-result-item:hover,
+.ff-sf-result-item--active {
+    background: var(--form-surface-3);
+}
+
+.ff-sf-result-item--active {
+    background: var(--form-accent-dim);
+    border-left: 2px solid var(--form-accent);
+}
+
+/* ── Default result renderer ── */
+.ff-sf-result-default {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.ff-sf-result-icon {
+    display: flex;
+    align-items: center;
+    color: var(--form-text-muted);
+    flex-shrink: 0;
+    transition: color var(--form-duration) var(--form-ease);
+}
+
+.ff-sf-result-item--active .ff-sf-result-icon,
+.ff-sf-result-default--active .ff-sf-result-icon {
+    color: var(--form-accent);
+}
+
+.ff-sf-result-label {
+    flex: 1;
+    font-size: 0.87rem;
+    color: var(--form-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Loading state ── */
+.ff-sf-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
+    color: var(--form-text-muted);
+    font-size: 0.83rem;
+}
+
+@keyframes ffSpinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.ff-sf-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(212, 168, 67, 0.25);
+    border-top-color: var(--form-accent);
+    border-radius: 50%;
+    animation: ffSpinner 0.7s linear infinite;
+}
+
+/* ── Empty state ── */
+.ff-sf-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    padding: 1.5rem 1rem;
+    color: var(--form-text-muted);
+    font-size: 0.83rem;
+}
+
+.ff-sf-empty-icon {
+    display: flex;
+    align-items: center;
+    opacity: 0.5;
+}
+
+/* ── Simple result renderer ── */
+.ff-sf-result-simple {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+/* ── Rich result renderer ── */
+.ff-sf-result-rich {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Avatar wrapper */
+.ff-sf-result-avatar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--form-radius-sm);
+    overflow: hidden;
+    background: var(--form-surface-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Avatar — image */
+.ff-sf-result-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Avatar — initials badge */
+.ff-sf-result-avatar-initials {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--form-accent-bright);
+    text-transform: uppercase;
+    user-select: none;
+}
+
+/* Avatar — fallback icon */
+.ff-sf-result-avatar-icon {
+    display: flex;
+    align-items: center;
+    color: var(--form-text-muted);
+    opacity: 0.6;
+}
+
+/* Text column (label + sublabel) */
+.ff-sf-result-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+/* Sublabel — secondary line in rich results */
+.ff-sf-result-sublabel {
+    font-size: 0.74rem;
+    color: var(--form-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+/* Active state overrides for rich result */
+.ff-sf-result-item--active .ff-sf-result-avatar {
+    background: rgba(212, 168, 67, 0.16);
+}
+
+.ff-sf-result-item--active .ff-sf-result-avatar-initials {
+    color: var(--form-accent-bright);
+}
+
+.ff-sf-result-item--active .ff-sf-result-avatar-icon {
+    color: var(--form-accent);
+    opacity: 1;
+}
+
+.ff-sf-result-item--active .ff-sf-result-sublabel {
+    color: var(--form-text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   AVATAR CIRCLE PICKER  (variant="avatar" — single mode only)
+   Original "card" single mode is completely untouched above.
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-avatar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+/* ── Alignment ── */
+.ff-avatar-wrap--left {
+    align-items: flex-start;
+}
+
+.ff-avatar-wrap--center {
+    align-items: center;
+}
+
+.ff-avatar-wrap--right {
+    align-items: flex-end;
+}
+
+/* The circle — ring border, clips children */
+.ff-avatar-circle {
+    position: relative;
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    border: 2.5px solid var(--form-accent);
+    background: var(--form-surface-3);
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration-slow) var(--form-ease);
+    box-shadow:
+        0 0 0 4px var(--form-surface-2),
+        0 0 28px rgba(201, 168, 76, 0.14);
+}
+
+.ff-avatar-circle:hover:not(:disabled) {
+    border-color: var(--form-accent-bright);
+    box-shadow:
+        0 0 0 4px var(--form-surface-2),
+        0 0 36px rgba(201, 168, 76, 0.26);
+}
+
+.ff-avatar-circle:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 4px var(--form-surface-2),
+        0 0 0 7px rgba(201, 168, 76, 0.38);
+}
+
+.ff-avatar-circle--error {
+    border-color: var(--form-error-text) !important;
+    box-shadow:
+        0 0 0 4px var(--form-surface-2),
+        0 0 24px var(--form-error-glow) !important;
+}
+
+.ff-avatar-circle--disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+/* ── Square shape — overrides border-radius only ── */
+.ff-avatar-circle--square {
+    border-radius: var(--form-radius-md);
+}
+
+/* Video circle — purple ring */
+.ff-avatar-circle--video {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 4px var(--form-surface-2), 0 0 28px rgba(167, 139, 250, 0.14);
+}
+
+.ff-avatar-circle--video:hover:not(:disabled) {
+    border-color: #c4b5fd;
+    box-shadow: 0 0 0 4px var(--form-surface-2), 0 0 36px rgba(167, 139, 250, 0.26);
+}
+
+/* File circle — neutral border */
+.ff-avatar-circle--file {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.ff-avatar-circle--file:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.35);
+    filter: brightness(1.1);
+}
+
+/* Image fills circle */
+.ff-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--form-duration-slow) var(--form-ease);
+}
+
+.ff-avatar-circle:hover .ff-avatar-img {
+    transform: scale(1.05);
+}
+
+/* Empty state icon */
+.ff-avatar-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--form-text-muted);
+}
+
+.ff-avatar-empty svg {
+    width: 38px;
+    height: 38px;
+    opacity: 0.55;
+}
+
+.ff-avatar-circle:hover .ff-avatar-empty {
+    color: var(--form-text-secondary);
+}
+
+.ff-avatar-empty--video svg {
+    color: #a78bfa;
+    opacity: 0.65;
+}
+
+/* ── Hover overlay — shown on top of the image ── */
+.ff-avatar-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    /* matches circle; square overrides below */
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity var(--form-duration) var(--form-ease);
+    pointer-events: none;
+    /* overlay itself is non-interactive */
+}
+
+/* Square overlay also follows square radius */
+.ff-avatar-overlay.ff-avatar-circle--square {
+    border-radius: var(--form-radius-md);
+}
+
+.ff-avatar-circle:hover .ff-avatar-overlay {
+    opacity: 1;
+}
+
+.ff-avatar-overlay svg {
+    width: 26px;
+    height: 26px;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+}
+
+.ff-avatar-overlay-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Overlay action buttons (Replace + Remove) shown on top of image ── */
+.ff-avatar-overlay-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    pointer-events: auto;
+    /* these are clickable even though parent overlay isn't */
+}
+
+.ff-avatar-overlay-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-avatar-overlay-btn svg {
+    width: 16px;
+    height: 16px;
+    filter: none;
+    /* reset the overlay svg rule above */
+}
+
+.ff-avatar-overlay-btn--replace {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+}
+
+.ff-avatar-overlay-btn--replace:hover {
+    background: rgba(201, 168, 76, 0.75);
+    transform: scale(1.08);
+}
+
+.ff-avatar-overlay-btn--remove {
+    background: rgba(248, 113, 113, 0.22);
+    color: #fca5a5;
+}
+
+.ff-avatar-overlay-btn--remove:hover {
+    background: rgba(248, 113, 113, 0.65);
+    color: #fff;
+    transform: scale(1.08);
+}
+
+/* Play badge visible over video thumbnail */
+.ff-avatar-play-badge {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.78);
+    pointer-events: none;
+    transition: opacity var(--form-duration) var(--form-ease);
+}
+
+.ff-avatar-circle:hover .ff-avatar-play-badge {
+    opacity: 0;
+}
+
+/* ── Status dot — bottom-right of the avatar ── */
+.ff-avatar-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 0 3px var(--form-surface-2), 0 0 10px rgba(74, 222, 128, 0.55);
+    /* Aligns to bottom-right of the 148px circle */
+    margin-top: -34px;
+    margin-left: 116px;
+    flex-shrink: 0;
+    animation: ffAvatarDotPop 0.32s var(--form-ease-spring) both;
+}
+
+@keyframes ffAvatarDotPop {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Disabled dot — greyed out, no glow */
+.ff-avatar-dot--disabled {
+    background: var(--form-text-muted);
+    box-shadow: 0 0 0 3px var(--form-surface-2);
+    opacity: 0.55;
+}
+
+/* Video dot */
+.ff-avatar-dot--video {
+    background: #a78bfa;
+    box-shadow: 0 0 0 3px var(--form-surface-2), 0 0 10px rgba(167, 139, 250, 0.55);
+}
+
+/* Square avatar dot — sits at bottom-right corner of the 148px square */
+.ff-avatar-dot--square {
+    border-radius: var(--form-radius-xs);
+    margin-top: -22px;
+    margin-left: 120px;
+}
+
+/* File ext badge inside circle */
+.ff-avatar-file-ext {
+    font-size: 1.65rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    position: relative;
+    z-index: 1;
+    transition: opacity var(--form-duration) var(--form-ease);
+}
+
+.ff-avatar-circle:hover .ff-avatar-file-ext {
+    opacity: 0;
+}
+
+/* ── Actions row — kept for VideoPickerField / FilePickerField avatar variants ── */
+.ff-avatar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+    animation: formFadeIn 0.22s var(--form-ease) both;
+}
+
+.ff-avatar-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: var(--form-radius-pill);
+    border: 1.5px solid var(--form-error-border);
+    background: var(--form-error-bg);
+    color: var(--form-error-text);
+    font-size: 0.74rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-avatar-remove:hover:not(:disabled) {
+    background: rgba(248, 113, 113, 0.22);
+    box-shadow: 0 0 12px rgba(248, 113, 113, 0.18);
+    transform: translateY(-1px);
+}
+
+.ff-avatar-remove:disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+.ff-avatar-filename {
+    font-size: 0.77rem;
+    font-weight: 600;
+    color: var(--form-text-secondary);
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-avatar-filesize {
+    font-size: 0.72rem;
+    color: var(--form-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Filename row below avatar (showFileName=true) ── */
+.ff-avatar-filename-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    animation: formFadeIn 0.22s var(--form-ease) both;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   COLOR PICKER FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Swatches grid ── */
+.ff-color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--form-surface-3);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    transition: border-color var(--form-duration) var(--form-ease);
+}
+
+.ff-color-swatches:hover {
+    border-color: var(--form-border-hover);
+}
+
+.ff-color-swatch {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--form-radius-sm);
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    transition:
+        transform 150ms var(--form-ease-spring),
+        box-shadow var(--form-duration) var(--form-ease),
+        border-color var(--form-duration) var(--form-ease);
+}
+
+.ff-color-swatch:hover {
+    transform: scale(1.18) translateY(-2px);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.ff-color-swatch--active {
+    border-color: #fff;
+    transform: scale(1.15);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 0 0 3px rgba(255, 255, 255, 0.18), 0 4px 16px rgba(0, 0, 0, 0.32);
+}
+
+.ff-color-swatch-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    mix-blend-mode: difference;
+    filter: invert(1);
+}
+
+/* ── Custom hex row ── */
+.ff-color-custom-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+}
+
+.ff-color-preview-btn {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: var(--form-radius-sm);
+    border: 1.5px solid var(--form-border);
+    cursor: pointer;
+    padding: 0;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+    transition: transform 150ms var(--form-ease-spring), box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-color-preview-btn:hover {
+    transform: scale(1.1);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 4px 14px rgba(0, 0, 0, 0.30);
+}
+
+.ff-color-hex-input {
+    flex: 1;
+    max-width: 130px;
+    background: var(--form-surface-3);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-sm);
+    color: var(--form-text-primary);
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    font-size: 0.82rem;
+    padding: 0.45rem 0.7rem;
+    letter-spacing: 0.04em;
+    transition: border-color var(--form-duration) var(--form-ease), box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-color-hex-input:focus {
+    outline: none;
+    border-color: var(--form-border-focus);
+    box-shadow: var(--form-shadow-focus);
+}
+
+/* ── Input variant ── */
+.ff-color-input-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.ff-color-wheel-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.ff-color-wheel-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2.5px solid var(--form-border);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color var(--form-duration) var(--form-ease), transform 150ms var(--form-ease-spring), box-shadow var(--form-duration-slow) var(--form-ease);
+    box-shadow: 0 0 0 4px var(--form-surface-2), inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+}
+
+.ff-color-wheel-btn:hover {
+    border-color: var(--form-border-hover);
+    transform: scale(1.06);
+    box-shadow: 0 0 0 4px var(--form-surface-2), 0 8px 24px rgba(0, 0, 0, 0.32), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.ff-color-wheel-icon {
+    display: flex;
+    color: rgba(255, 255, 255, 0.75);
+    mix-blend-mode: overlay;
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.35));
+}
+
+.ff-color-input-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ff-color-input-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--form-text-muted);
+    text-transform: uppercase;
+}
+
+.ff-color-hex-input-lg {
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+}
+
+.ff-color-rgb-row {
+    display: flex;
+    gap: 0.45rem;
+}
+
+.ff-color-rgb-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--form-surface-3);
+    border: 1px solid var(--form-border);
+    border-radius: var(--form-radius-xs);
+    padding: 0.2rem 0.55rem;
+}
+
+.ff-color-rgb-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--form-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.ff-color-rgb-val {
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--form-text-secondary);
+}
+
+.ff-color-native-hidden {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    border: none;
+    padding: 0;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   BOOLEAN FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-bool-group {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.ff-bool-group--error .ff-bool-btn {
+    border-color: var(--form-error-border);
+}
+
+.ff-bool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--form-radius-pill);
+    border: 1.5px solid var(--form-border);
+    background: var(--form-surface-3);
+    color: var(--form-text-secondary);
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    min-width: 96px;
+    justify-content: center;
+    user-select: none;
+    transition:
+        background var(--form-duration) var(--form-ease),
+        border-color var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        transform 150ms var(--form-ease-spring);
+}
+
+.ff-bool-btn:hover:not(:disabled):not(.ff-bool-btn--active) {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-4);
+    color: var(--form-text-primary);
+    transform: translateY(-1px);
+}
+
+.ff-bool-btn:disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+}
+
+.ff-bool-btn-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* YES active — green */
+.ff-bool-btn--true.ff-bool-btn--active {
+    background: rgba(74, 222, 128, 0.12);
+    border-color: rgba(74, 222, 128, 0.50);
+    color: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.10), 0 0 20px rgba(74, 222, 128, 0.12);
+    transform: translateY(-1px);
+}
+
+/* NO active — red */
+.ff-bool-btn--false.ff-bool-btn--active {
+    background: rgba(248, 113, 113, 0.12);
+    border-color: rgba(248, 113, 113, 0.50);
+    color: #f87171;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.10), 0 0 20px rgba(248, 113, 113, 0.12);
+    transform: translateY(-1px);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   JSON FIELD
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Toolbar strip — connected to textarea top edge */
+.ff-json-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--form-surface-3);
+    border: 1.5px solid var(--form-border);
+    border-bottom: none;
+    border-radius: var(--form-radius-md) var(--form-radius-md) 0 0;
+}
+
+.ff-json-toolbar-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--form-text-muted);
+}
+
+.ff-json-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.ff-json-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    padding: 0.28rem 0.6rem;
+    border-radius: var(--form-radius-xs);
+    border: 1px solid var(--form-border);
+    background: transparent;
+    color: var(--form-text-muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background var(--form-duration) var(--form-ease), border-color var(--form-duration) var(--form-ease), color var(--form-duration) var(--form-ease);
+}
+
+.ff-json-toolbar-btn:hover:not(:disabled) {
+    background: var(--form-surface-4);
+    border-color: var(--form-border-hover);
+    color: var(--form-text-primary);
+}
+
+.ff-json-toolbar-btn:disabled {
+    opacity: 0.35;
+    cursor: var(--form-disabled-cursor);
+}
+
+.ff-json-toolbar-btn--clear {
+    border-color: transparent;
+    padding: 0.28rem 0.4rem;
+}
+
+.ff-json-toolbar-btn--clear:hover:not(:disabled) {
+    color: var(--form-error-text);
+    border-color: var(--form-error-border);
+    background: var(--form-error-bg);
+}
+
+.ff-json-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.71rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--form-radius-pill);
+}
+
+.ff-json-status--valid {
+    background: rgba(74, 222, 128, 0.12);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.30);
+}
+
+.ff-json-status--invalid {
+    background: var(--form-error-bg);
+    color: var(--form-error-text);
+    border: 1px solid var(--form-error-border);
+}
+
+/* Textarea — monospace, radius only on bottom (toolbar is on top) */
+.ff-json-textarea {
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    resize: vertical;
+    min-height: 160px;
+    tab-size: 2;
+    white-space: pre;
+    overflow-x: auto;
+    border-radius: 0 0 var(--form-radius-md) var(--form-radius-md) !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+
+.ff-json-textarea--valid {
+    border-left-color: rgba(74, 222, 128, 0.40);
+}
+
+.ff-json-textarea--valid:focus {
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12), 0 0 28px rgba(74, 222, 128, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ff-json-parse-err {
+    margin-top: 0.35rem;
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    font-size: 0.76rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   v3 — FLOATING LABEL SYSTEM
+   Apply floatingLabel prop on any text-type field.
+   .ff--floating wraps the field; .ff-label--floating is the animated label.
+   Label always stays INSIDE the input box — idle at center, active at top-inside.
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff--floating {
+    position: relative;
+}
+
+/* Floating label — idle state: sits inside input vertically centered */
+.ff-label--floating {
+    position: absolute;
+    left: calc(var(--form-input-padding-x) + 1px);
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--form-text-placeholder);
+    font-size: var(--form-input-font-size);
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    background: none;
+    padding: 0;
+    transition:
+        top var(--form-duration) var(--form-ease),
+        transform var(--form-duration) var(--form-ease),
+        font-size var(--form-duration) var(--form-ease),
+        font-weight var(--form-duration) var(--form-ease),
+        color var(--form-duration) var(--form-ease),
+        letter-spacing var(--form-duration) var(--form-ease),
+        left var(--form-duration) var(--form-ease);
+    z-index: 2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 2 * var(--form-input-padding-x));
+    line-height: 1;
+}
+
+/* Left-icon offset — label shifts right when icon present */
+.ff--floating .ff-input--has-left~.ff-label--floating {
+    left: calc(var(--form-input-padding-x) + 30px);
+}
+
+/* Float-active: label rises to top-inside of the input box */
+.ff-label--floating.ff-label--float-active {
+    top: 0.65rem;
+    transform: translateY(0);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--form-accent);
+    left: calc(var(--form-input-padding-x) + 1px);
+    background: none;
+    padding: 0;
+    max-width: unset;
+}
+
+/* Left-icon offset reset when floated — no offset needed, label goes back to left edge */
+.ff--floating .ff-input--has-left~.ff-label--floating.ff-label--float-active {
+    left: calc(var(--form-input-padding-x) + 1px);
+}
+
+/* Input: extra top-padding so typed text clears the floated label */
+.ff--floating .ff-input {
+    padding-top: calc(var(--form-input-padding-y) + 0.9rem);
+    padding-bottom: calc(var(--form-input-padding-y) - 0.3rem);
+}
+
+/* Float label inside label-row (when info prop is set) */
+.ff-label-row--floating {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   v3 — FIELDSET + LEGEND WRAPPER
+   Native <legend> sits on the border line automatically — no background needed.
+   Remove float:none so browser default legend positioning is preserved.
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── FieldsetField — exported group wrapper component ── */
+.ff-fieldset-group {
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-lg);
+    padding: 0.85rem 1.1rem 0.9rem;
+    margin: 0 0 1rem;
+    background: transparent;
+    transition: border-color var(--form-duration) var(--form-ease);
+}
+
+.ff-fieldset-group:focus-within {
+    border-color: rgba(212, 168, 67, 0.40);
+}
+
+.ff-fieldset-group>.ff {
+    margin-bottom: 0.75rem;
+}
+
+.ff-fieldset-group>.ff:last-child {
+    margin-bottom: 0;
+}
+
+.ff-fieldset-group-legend {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--form-accent);
+    padding: 0 0.4rem;
+    line-height: 1;
+    background: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FIELDSET MODE — input border moves to the wrap, legend sits on wrap border
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* The wrap becomes the visible bordered element */
+.ff-input-wrap--fieldset {
+    position: relative;
+    margin-top: 0.6rem;
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    background: var(--form-surface-2);
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease);
+}
+
+/* Hover — same as ff-input hover */
+.ff-input-wrap--fieldset:hover:not(:focus-within) {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+    box-shadow: var(--form-shadow-hover);
+}
+
+/* Focus — same as ff-input focus */
+.ff-input-wrap--fieldset:focus-within {
+    border-color: var(--form-border-focus);
+    box-shadow: var(--form-shadow-focus);
+    background: var(--form-surface-3);
+}
+
+/* Error state — driven by the ff-input--error class on the input inside */
+.ff-input-wrap--fieldset:has(.ff-input--error) {
+    border-color: var(--form-error-border);
+    box-shadow: var(--form-shadow-error);
+    background: var(--form-error-bg);
+}
+
+/* Disabled */
+.ff-input-wrap--fieldset:has(.ff-input:disabled) {
+    opacity: var(--form-disabled-opacity);
+}
+
+/* Input inside fieldset wrap — strip border, bg, shadow; keep layout/padding */
+.ff-input--no-border {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.ff-input--no-border:hover,
+.ff-input--no-border:focus {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Legend — sits on wrap border, needs bg to cut the line */
+.ff-inline-legend {
+    position: absolute;
+    top: 0;
+    left: calc(var(--form-input-padding-x) - 2px);
+    transform: translateY(-50%);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--form-accent);
+    background: var(--form-surface-2);
+    padding: 0 5px;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 3;
+    white-space: nowrap;
+    border-radius: 2px;
+    transition: background var(--form-duration) var(--form-ease);
+}
+
+/* Legend bg follows wrap hover/focus bg */
+.ff-input-wrap--fieldset:hover:not(:focus-within) .ff-inline-legend {
+    background: var(--form-surface-3);
+}
+
+.ff-input-wrap--fieldset:focus-within .ff-inline-legend {
+    background: var(--form-surface-3);
+    color: var(--form-accent-bright);
+}
+
+.ff-input-wrap--fieldset:has(.ff-input--error) .ff-inline-legend {
+    background: var(--form-error-bg);
+    color: var(--form-error-text);
+}
+
+/* Inside card/picker surfaces */
+.ff-card .ff-inline-legend {
+    background: var(--form-surface-2);
+}
+
+.ff-card .ff-input-wrap--fieldset:hover:not(:focus-within) .ff-inline-legend,
+.ff-card .ff-input-wrap--fieldset:focus-within .ff-inline-legend {
+    background: var(--form-surface-3);
+}
+
+/* Padding unchanged — text still clears the legend at the top */
+.ff-input-wrap--fieldset .ff-input,
+.ff-input-wrap--fieldset .ff-select,
+.ff-input-wrap--fieldset .ff-textarea {
+    padding-top: calc(var(--form-input-padding-y) + 0.15rem);
+    padding-bottom: calc(var(--form-input-padding-y) + 0.15rem);
+}
+
+/* Group-level inline legend (RadioGroup, CheckboxGroup with fieldset=true) */
+.ff-group--fieldset {
+    position: relative;
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    padding: 1rem var(--form-input-padding-x) 0.75rem;
+    margin-top: 0.6rem;
+    transition: border-color var(--form-duration) var(--form-ease);
+}
+
+.ff-group--fieldset:focus-within {
+    border-color: rgba(212, 168, 67, 0.35);
+}
+
+.ff-group-inline-legend {
+    position: absolute;
+    top: 0;
+    left: calc(var(--form-input-padding-x) - 2px);
+    transform: translateY(-50%);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--form-accent);
+    background: var(--form-surface-1);
+    padding: 0 5px;
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+    border-radius: 2px;
+    transition: background var(--form-duration) var(--form-ease), color var(--form-duration) var(--form-ease);
+}
+
+.ff-group--fieldset:focus-within .ff-group-inline-legend {
+    color: var(--form-accent-bright);
+    background: var(--form-surface-1);
+}
+
+.ff-card .ff-group-inline-legend,
+.ff--picker .ff-group-inline-legend {
+    background: var(--form-surface-2);
+}
+
+/* Single checkbox/radio with fieldset */
+.ff-checkbox-single--fieldset,
+.ff-radio-single--fieldset {
+    position: relative;
+    margin-top: 0.6rem;
+}
+
+/* Color field wrap with fieldset */
+.ff-color-field-wrap--fieldset,
+.ff-color-picker-row--fieldset {
+    position: relative;
+    margin-top: 0.6rem;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   v3 — SINGLE CHECKBOX FIELD (.ff-checkbox-single)
+   Matches TextField visual language: border, surface, glow on checked/focus.
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-checkbox-single {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem var(--form-input-padding-x);
+    background: var(--form-surface-2);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    cursor: pointer;
+    user-select: none;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+    outline: none;
+    position: relative;
+}
+
+.ff-checkbox-single:hover:not(.ff-checkbox-single--disabled) {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-checkbox-single:focus-visible {
+    outline: none;
+    box-shadow: var(--form-shadow-focus);
+    border-color: var(--form-border-focus);
+}
+
+.ff-checkbox-single--checked {
+    border-color: rgba(212, 168, 67, 0.45);
+    background: var(--form-accent-glow);
+    box-shadow: 0 0 0 2px rgba(212, 168, 67, 0.10);
+}
+
+.ff-checkbox-single--checked:hover:not(.ff-checkbox-single--disabled) {
+    border-color: rgba(212, 168, 67, 0.65);
+    background: rgba(212, 168, 67, 0.12);
+}
+
+.ff-checkbox-single--error {
+    border-color: var(--form-error-border) !important;
+    background: var(--form-error-bg);
+    box-shadow: 0 0 0 2px var(--form-error-glow);
+}
+
+.ff-checkbox-single--disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+    pointer-events: none;
+}
+
+/* Checkbox box inside single checkbox */
+.ff-checkbox-single .ff-checkbox-box {
+    margin-top: 1px;
+    flex-shrink: 0;
+}
+
+.ff-checkbox-box--ticked {
+    border-color: var(--form-accent);
+    background: var(--form-accent);
+}
+
+.ff-checkbox-box--ticked .ff-checkbox-tick {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.ff-checkbox-single--checked .ff-checkbox-box {
+    border-color: var(--form-accent);
+    background: var(--form-accent);
+}
+
+.ff-checkbox-single--checked .ff-checkbox-tick {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.ff-checkbox-single--checked .ff-checkbox-single-label {
+    color: var(--form-accent-bright);
+}
+
+/* Text content */
+.ff-checkbox-single-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ff-checkbox-single-label {
+    font-size: var(--form-input-font-size);
+    font-weight: 500;
+    color: var(--form-text-primary);
+    line-height: 1.4;
+}
+
+.ff-checkbox-single-info {
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   v3 — SINGLE RADIO FIELD (.ff-radio-single)
+   Matches TextField visual language: border, surface, glow on selected/focus.
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.ff-radio-single {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem var(--form-input-padding-x);
+    background: var(--form-surface-2);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    cursor: pointer;
+    user-select: none;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        background var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+    outline: none;
+    position: relative;
+}
+
+.ff-radio-single:hover:not(.ff-radio-single--disabled) {
+    border-color: var(--form-border-hover);
+    background: var(--form-surface-3);
+}
+
+.ff-radio-single:focus-visible {
+    outline: none;
+    box-shadow: var(--form-shadow-focus);
+    border-color: var(--form-border-focus);
+}
+
+.ff-radio-single--selected {
+    border-color: rgba(212, 168, 67, 0.45);
+    background: var(--form-accent-glow);
+    box-shadow: 0 0 0 2px rgba(212, 168, 67, 0.10);
+}
+
+.ff-radio-single--selected:hover:not(.ff-radio-single--disabled) {
+    border-color: rgba(212, 168, 67, 0.65);
+    background: rgba(212, 168, 67, 0.12);
+}
+
+.ff-radio-single--error {
+    border-color: var(--form-error-border) !important;
+    background: var(--form-error-bg);
+    box-shadow: 0 0 0 2px var(--form-error-glow);
+}
+
+.ff-radio-single--disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+    pointer-events: none;
+}
+
+/* Radio circle inside single */
+.ff-radio-single .ff-radio-circle {
+    margin-top: 1px;
+    flex-shrink: 0;
+}
+
+.ff-radio-circle--dotted {
+    border-color: var(--form-accent);
+    background: var(--form-accent-dim);
+}
+
+.ff-radio-circle--dotted .ff-radio-dot {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.ff-radio-single--selected .ff-radio-circle {
+    border-color: var(--form-accent);
+    background: var(--form-accent-dim);
+}
+
+.ff-radio-single--selected .ff-radio-dot {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.ff-radio-single--selected .ff-radio-single-label {
+    color: var(--form-accent-bright);
+}
+
+.ff-radio-single-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ff-radio-single-label {
+    font-size: var(--form-input-font-size);
+    font-weight: 500;
+    color: var(--form-text-primary);
+    line-height: 1.4;
+}
+
+.ff-radio-single-info {
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   v3 — COLOR PICKER FIELD — restyle (matches TextField)
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Swatches variant wrap — now bordered like an input field ── */
+.ff-color-field-wrap {
+    background: var(--form-surface-2);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    padding: 0.85rem var(--form-input-padding-x);
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-color-field-wrap:hover {
+    border-color: var(--form-border-hover);
+}
+
+.ff-color-field-wrap--focus {
+    border-color: var(--form-border-focus);
+    box-shadow: var(--form-shadow-focus);
+}
+
+.ff-color-field-wrap--error {
+    border-color: var(--form-error-border);
+    box-shadow: var(--form-shadow-error);
+}
+
+/* Swatches row inside wrap */
+.ff-color-swatches-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Hex row inside wrap */
+.ff-color-hex-row {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--form-border);
+}
+
+/* Preview button inside hex row */
+.ff-color-hex-row .ff-color-preview-btn {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: var(--form-radius-sm);
+    border: 1.5px solid var(--form-border);
+    cursor: pointer;
+    padding: 0;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+    transition: transform 150ms var(--form-ease-spring), box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-color-hex-row .ff-color-preview-btn:hover {
+    transform: scale(1.1);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 4px 14px rgba(0, 0, 0, 0.30);
+}
+
+/* Inline hex input (swatches variant) */
+.ff-color-hex-input-inline {
+    flex: 1;
+    background: var(--form-surface-3);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-sm);
+    color: var(--form-text-primary);
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.7rem;
+    letter-spacing: 0.04em;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+    outline: none;
+}
+
+.ff-color-hex-input-inline:focus {
+    border-color: var(--form-border-focus);
+    box-shadow: var(--form-shadow-focus);
+}
+
+/* ── Input variant — left icon is the color trigger button ── */
+.ff-color-trigger-btn {
+    background: none !important;
+    width: 36px;
+    height: 36px;
+    border: none !important;
+    border-radius: var(--form-radius-sm) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        transform 150ms var(--form-ease-spring),
+        box-shadow var(--form-duration) var(--form-ease) !important;
+    overflow: hidden;
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+}
+
+.ff-color-trigger-btn:hover:not(:disabled) {
+    transform: translateY(-50%) scale(1.08);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.ff-color-trigger-icon {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.65);
+    mix-blend-mode: difference;
+    pointer-events: none;
+}
+
+/* Main hex input (input variant) */
+.ff-color-hex-input-main {
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+}
+
+/* RGB breakdown badge — lives in right icon slot */
+.ff-color-rgb-badge {
+    display: flex !important;
+    align-items: center;
+    gap: 0.25rem;
+    padding-right: 0.5rem;
+    width: auto !important;
+    pointer-events: none;
+}
+
+
+
+/* ── Picker variant — square swatch left + hex value right ── */
+.ff-color-picker-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    background: var(--form-surface-2);
+    border: 1.5px solid var(--form-border);
+    border-radius: var(--form-radius-md);
+    cursor: pointer;
+    transition:
+        border-color var(--form-duration) var(--form-ease),
+        box-shadow var(--form-duration) var(--form-ease);
+}
+
+.ff-color-picker-row:hover:not(.ff-color-picker-row--disabled) {
+    border-color: var(--form-border-hover);
+    box-shadow: var(--form-shadow-hover);
+}
+
+.ff-color-picker-row:focus-within {
+    border-color: var(--form-border-focus);
+    box-shadow: var(--form-shadow-focus);
+}
+
+.ff-color-picker-row--error {
+    border-color: var(--form-error-border) !important;
+    box-shadow: var(--form-shadow-error) !important;
+}
+
+.ff-color-picker-row--disabled {
+    opacity: var(--form-disabled-opacity);
+    cursor: var(--form-disabled-cursor);
+    pointer-events: none;
+}
+
+/* Square swatch — clickable color input */
+.ff-color-picker-swatch {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--form-radius-sm);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    padding: 0;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+    transition: transform 150ms var(--form-ease-spring), box-shadow var(--form-duration) var(--form-ease);
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.ff-color-picker-swatch::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.ff-color-picker-swatch::-webkit-color-swatch {
+    border: none;
+    border-radius: calc(var(--form-radius-sm) - 2px);
+}
+
+.ff-color-picker-swatch::-moz-color-swatch {
+    border: none;
+    border-radius: calc(var(--form-radius-sm) - 2px);
+}
+
+.ff-color-picker-swatch:hover {
+    transform: scale(1.08);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22), 0 4px 14px rgba(0, 0, 0, 0.30);
+}
+
+/* Hex value text */
+.ff-color-picker-value {
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--form-text-primary);
+    flex-shrink: 0;
+}
+
+/* Editable hex input (picker variant) */
+.ff-color-picker-hex-edit {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--form-text-primary);
+    padding: 0;
+    caret-color: var(--form-accent);
+}
+
+.ff-color-picker-hex-edit::placeholder {
+    color: var(--form-text-placeholder);
+    font-weight: 400;
+}
+
+.ff-color-picker-hex-edit--error {
+    color: var(--form-error-text);
+}
+
+/* Invalid icon inside row */
+.ff-color-picker-invalid-icon {
+    display: flex;
+    align-items: center;
+    color: var(--form-error-text);
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* RGB chips inline */
+.ff-color-picker-rgb {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: auto;
+}
