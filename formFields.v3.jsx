@@ -558,32 +558,37 @@ function useTypingIndicator(delay = 1200) {
 /**
  * TextField — General purpose text input with typing indicator animation.
  *
- * @param {Object}   props
- * @param {string}   [props.label]            - Field label
- * @param {string}   [props.value]            - Controlled value
- * @param {Function} [props.onChange]         - (value, event) => void
- * @param {Function} [props.setValue]         - Direct setter shorthand
- * @param {string}   [props.placeholder]      - Placeholder text
- * @param {string}   [props.type="text"]      - Input type: text | search
- * @param {string}   [props.name]             - Native name attribute
- * @param {string}   [props.id]              - Native id (auto-generated if omitted)
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {boolean}  [props.readOnly]
- * @param {number}   [props.maxLength]
- * @param {boolean}  [props.autoFocus]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
- * @param {boolean}  [props.showError=true]
- * @param {React.ReactNode} [props.leftIcon]
- * @param {React.ReactNode} [props.rightIcon]
- * @param {boolean}  [props.floatingLabel=false] - Animate label above input on focus/fill
- * @param {boolean}  [props.hideLabel=false]     - Hide the label entirely
- * @param {boolean}  [props.fieldset=false]      - Turn input border into a fieldset; legend sits on the border, label hidden
- * @param {string}   [props.legend]              - Legend text (requires fieldset=true)
- * @param {number}   [props.throttle=0]          - ms to throttle onChange calls while typing (0 = off)
- * @param {string}   [props.className]
- * @param {string}   [props.inputClassName]
+ * @param {Object}          props
+ * @param {string}          [props.label]              - Field label
+ * @param {string}          [props.value]              - Controlled value
+ * @param {Function}        [props.onChange]           - (value, event) => void
+ * @param {Function}        [props.setValue]           - Direct setter shorthand
+ * @param {string}          [props.placeholder]        - Placeholder text
+ * @param {string}          [props.type="text"]        - Input type: text | search
+ * @param {string}          [props.name]               - Native name attribute
+ * @param {string}          [props.id]                 - Native id (auto-generated if omitted)
+ * @param {boolean}         [props.required=false]
+ * @param {boolean}         [props.disabled=false]
+ * @param {boolean}         [props.readOnly=false]
+ * @param {number}          [props.maxLength]          - Maximum character count
+ * @param {boolean}         [props.autoFocus=false]
+ * @param {string}          [props.helperText]         - Muted helper text below the field
+ * @param {string}          [props.error]              - Error message; also triggers error style
+ * @param {boolean}         [props.showError=true]     - Set false to suppress error UI
+ * @param {Array}           [props.errors=[]]          - Structured error list [{file?, message, code?}]
+ * @param {string}          [props.info]               - Meta text shown right-aligned next to label
+ * @param {React.ReactNode} [props.leftIcon]           - Icon/element rendered inside left edge
+ * @param {React.ReactNode} [props.rightIcon]          - Icon/element rendered inside right edge
+ * @param {Function}        [props.onBlur]             - (event) => void
+ * @param {Function}        [props.onFocus]            - (event) => void
+ * @param {Function}        [props.onKeyDown]          - (event) => void
+ * @param {boolean}         [props.floatingLabel=false]  - Animate label above input on focus/fill
+ * @param {boolean}         [props.hideLabel=false]      - Hide the label entirely
+ * @param {boolean}         [props.fieldset=false]       - Turn input border into a fieldset; legend sits on the border, label hidden
+ * @param {string}          [props.legend]               - Legend text (requires fieldset=true)
+ * @param {number}          [props.throttle=0]           - ms to throttle onChange calls while typing (0 = off)
+ * @param {string}          [props.className]
+ * @param {string}          [props.inputClassName]
  *
  * @example
  * <TextField
@@ -708,29 +713,36 @@ export function TextField({
 /**
  * EmailField — Email input with optional live format validation indicator.
  *
- * By default shows a checkmark icon when the email format looks valid.
+ * By default shows a checkmark icon when the email format looks valid, and an
+ * inline error message when the format is invalid (non-empty value).
  * Set `validateFormat={false}` to disable the format check entirely — useful
  * when the server handles validation and you don't want the inline indicator.
  *
  * @param {Object}   props
- * @param {string}   [props.label]
+ * @param {string}   [props.label="Email Address"]
  * @param {string}   [props.value]
- * @param {Function} [props.onChange]         - (value, event) => void
+ * @param {Function} [props.onChange]              - (value, event) => void
  * @param {Function} [props.setValue]
- * @param {string}   [props.placeholder]
+ * @param {string}   [props.placeholder="you@example.com"]
  * @param {string}   [props.name]
- * @param {string}   [props.id]
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {boolean}  [props.readOnly]
- * @param {boolean}  [props.autoFocus]
- * @param {boolean}  [props.validateFormat=true] - When true, shows check icon on valid format
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
- * @param {boolean}  [props.showError=true]
- * @param {boolean}  [props.floatingLabel=false] - Animate label above input on focus/fill
- * @param {boolean}  [props.fieldset=false]      - Wrap in <fieldset>
- * @param {string}   [props.legend]              - <legend> text (requires fieldset=true)
+ * @param {string}   [props.id]                   - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {boolean}  [props.readOnly=false]
+ * @param {boolean}  [props.autoFocus=false]
+ * @param {boolean}  [props.validateFormat=true]  - When true, shows ✓ on valid format and error on invalid
+ * @param {string}   [props.helperText]            - Muted helper text below the field
+ * @param {string}   [props.error]                 - External error string; overrides format error
+ * @param {boolean}  [props.showError=true]        - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]             - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]                  - Meta text shown right-aligned next to label
+ * @param {Function} [props.onBlur]                - (event) => void
+ * @param {Function} [props.onFocus]               - (event) => void
+ * @param {Function} [props.onKeyDown]             - (event) => void
+ * @param {boolean}  [props.floatingLabel=false]   - Animate label above input on focus/fill
+ * @param {boolean}  [props.hideLabel=false]       - Hide the label entirely
+ * @param {boolean}  [props.fieldset=false]        - Wrap in <fieldset>
+ * @param {string}   [props.legend]                - <legend> text (requires fieldset=true)
  * @param {string}   [props.className]
  *
  * @example
@@ -789,7 +801,16 @@ export function EmailField({
         return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
     }, [validateFormat, value]);
 
-    const showValidIcon = validateFormat && isValidEmail && value && !hasError;
+    // When validateFormat is on and the user has typed something but it's not valid,
+    // show an inline format error (unless the parent already passed an error string).
+    const formatError = validateFormat && value && !isValidEmail && !error
+        ? "Please enter a valid email address."
+        : "";
+
+    const effectiveError = error || formatError;
+    const effectiveHasError = showError && (Boolean(effectiveError) || Boolean(errors?.length));
+
+    const showValidIcon = validateFormat && isValidEmail && value && !effectiveHasError;
 
     const handleChange = useCallback((e) => {
         const v = e.target.value;
@@ -822,12 +843,12 @@ export function EmailField({
                     onBlur={(e) => { setIsFocused(false); onBlur?.(e); }}
                     onFocus={(e) => { setIsFocused(true); onFocus?.(e); }}
                     onKeyDown={onKeyDown}
-                    aria-invalid={hasError}
+                    aria-invalid={effectiveHasError}
                     aria-required={required}
                     className={`ff-input ff-input--has-left
                         ${fieldset ? "ff-input--no-border" : ""}
                         ${showValidIcon ? "ff-input--has-right" : ""}
-                        ${hasError ? "ff-input--error" : ""}
+                        ${effectiveHasError ? "ff-input--error" : ""}
                     `}
                 />
                 {floatingLabel && (
@@ -840,7 +861,7 @@ export function EmailField({
                 )}
                 <div className={`ff-typing-bar${isTyping ? " ff-typing-bar--active" : ""}`} aria-hidden="true" />
             </div>
-            <FormFieldMessage hasError={hasError} helperText={helperText} error={error} errors={errors} />
+            <FormFieldMessage hasError={effectiveHasError} helperText={helperText} error={effectiveError} errors={errors} />
         </div>
     );
 }
@@ -856,20 +877,24 @@ export function EmailField({
  * Country code and number are edited separately then combined.
  *
  * @param {Object}   props
- * @param {string}   [props.label]
- * @param {string}   [props.value]              - Full phone value e.g. "+880 1712345678"
- * @param {Function} [props.onChange]           - (value, event) => void
+ * @param {string}   [props.label="Phone Number"]
+ * @param {string}   [props.value]                  - Full phone value e.g. "+880 1712345678"
+ * @param {Function} [props.onChange]               - (value, event) => void
  * @param {Function} [props.setValue]
- * @param {string}   [props.placeholder]        - Number placeholder
- * @param {string}   [props.defaultCountryCode] - Default country code, e.g. "+880"
+ * @param {string}   [props.placeholder]            - Number placeholder
+ * @param {string}   [props.defaultCountryCode="+880"] - Default country code e.g. "+880"
  * @param {string}   [props.name]
- * @param {string}   [props.id]
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {boolean}  [props.readOnly]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
- * @param {boolean}  [props.showError=true]
+ * @param {string}   [props.id]                     - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {boolean}  [props.readOnly=false]
+ * @param {string}   [props.helperText]             - Muted helper text below the field
+ * @param {string}   [props.error]                  - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true]         - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]              - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]                   - Meta text shown right-aligned next to label
+ * @param {Function} [props.onBlur]                 - (event) => void
+ * @param {Function} [props.onFocus]                - (event) => void
  * @param {string}   [props.className]
  *
  * @example
@@ -1003,21 +1028,27 @@ export function PhoneField({
  * PasswordField — Password input with show/hide toggle + typing indicator.
  *
  * @param {Object}   props
- * @param {string}   [props.label]
+ * @param {string}   [props.label="Password"]
  * @param {string}   [props.value]
- * @param {Function} [props.onChange]     - (value, event) => void
+ * @param {Function} [props.onChange]           - (value, event) => void
  * @param {Function} [props.setValue]
  * @param {string}   [props.placeholder]
  * @param {string}   [props.name]
- * @param {string}   [props.id]
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {number}   [props.maxLength]
- * @param {boolean}  [props.autoFocus]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
- * @param {boolean}  [props.showError=true]
+ * @param {string}   [props.id]                 - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {number}   [props.maxLength]          - Maximum character count
+ * @param {boolean}  [props.autoFocus=false]
+ * @param {string}   [props.helperText]         - Muted helper text below the field
+ * @param {string}   [props.error]              - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true]     - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]          - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]               - Meta text shown right-aligned next to label
+ * @param {Function} [props.onBlur]             - (event) => void
+ * @param {Function} [props.onFocus]            - (event) => void
+ * @param {Function} [props.onKeyDown]          - (event) => void
  * @param {string}   [props.className]
+ * @param {string}   [props.inputClassName]
  *
  * @example
  * <PasswordField
@@ -1115,21 +1146,29 @@ export function PasswordField({
  * @param {Object}   props
  * @param {string}   [props.label]
  * @param {string}   [props.value]
- * @param {Function} [props.onChange]     - (value, event) => void
+ * @param {Function} [props.onChange]         - (value, event) => void
  * @param {Function} [props.setValue]
  * @param {string}   [props.placeholder]
- * @param {number}   [props.rows=5]
- * @param {number}   [props.maxLength]    - Shows char counter when set
- * @param {number}   [props.minLength]
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {boolean}  [props.readOnly]
- * @param {boolean}  [props.autoFocus]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
- * @param {boolean}  [props.showError=true]
- * @param {number}   [props.throttle=0]      - ms to throttle onChange calls while typing (0 = off)
+ * @param {string}   [props.name]             - Native name attribute
+ * @param {string}   [props.id]               - Native id (auto-generated if omitted)
+ * @param {number}   [props.rows=5]           - Visible row count
+ * @param {number}   [props.maxLength]        - Shows char counter when set
+ * @param {number}   [props.minLength]        - Minimum character count
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {boolean}  [props.readOnly=false]
+ * @param {boolean}  [props.autoFocus=false]
+ * @param {string}   [props.helperText]       - Muted helper text below the field
+ * @param {string}   [props.error]            - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true]   - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]        - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]             - Meta text shown right-aligned next to label
+ * @param {Function} [props.onBlur]           - (event) => void
+ * @param {Function} [props.onFocus]          - (event) => void
+ * @param {Function} [props.onKeyDown]        - (event) => void
+ * @param {number}   [props.throttle=0]       - ms to throttle onChange calls while typing (0 = off)
  * @param {string}   [props.className]
+ * @param {string}   [props.inputClassName]
  *
  * @example
  * <TextArea
@@ -1269,19 +1308,27 @@ export function TextArea({
 /**
  * NumberField — Numeric input with +/- spinner buttons.
  *
- * @param {Object}   props
- * @param {string}   [props.label]
+ * @param {Object}        props
+ * @param {string}        [props.label]
  * @param {number|string} [props.value]
- * @param {Function} [props.onChange]    - (value: number, event) => void
- * @param {Function} [props.setValue]
- * @param {number}   [props.min]
- * @param {number}   [props.max]
- * @param {number}   [props.step=1]
- * @param {string}   [props.placeholder]
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {Function}      [props.onChange]      - (value: number, event) => void
+ * @param {Function}      [props.setValue]
+ * @param {number}        [props.min]           - Minimum allowed value
+ * @param {number}        [props.max]           - Maximum allowed value
+ * @param {number}        [props.step=1]        - Increment/decrement step
+ * @param {string}        [props.placeholder]
+ * @param {string}        [props.name]          - Native name attribute
+ * @param {string}        [props.id]            - Native id (auto-generated if omitted)
+ * @param {boolean}       [props.required=false]
+ * @param {boolean}       [props.disabled=false]
+ * @param {string}        [props.helperText]    - Muted helper text below the field
+ * @param {string}        [props.error]         - Error message; also triggers error style
+ * @param {boolean}       [props.showError=true] - Set false to suppress error UI
+ * @param {Array}         [props.errors=[]]     - Structured error list [{file?, message, code?}]
+ * @param {string}        [props.info]          - Meta text shown right-aligned next to label
+ * @param {Function}      [props.onBlur]        - (event) => void
+ * @param {Function}      [props.onFocus]       - (event) => void
+ * @param {string}        [props.className]
  *
  * @example
  * <NumberField
@@ -1399,15 +1446,23 @@ export function NumberField({
  * @param {Object}   props
  * @param {string}   [props.label]
  * @param {string}   [props.value]
- * @param {Function} [props.onChange]    - (value, event) => void
+ * @param {Function} [props.onChange]     - (value, event) => void
  * @param {Function} [props.setValue]
- * @param {Array}    props.options        - [{ value, label, disabled? }] | ["str"]
+ * @param {Array}    props.options         - [{ value, label, disabled? }] | ["str"]
  * @param {string}   [props.placeholder]
- * @param {Array}    [props.suggestions]  - Quick-select chips
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {Array}    [props.suggestions]   - Quick-select chips [{value, label}] | ["str"]
+ * @param {string}   [props.name]          - Native name attribute
+ * @param {string}   [props.id]            - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {string}   [props.helperText]    - Muted helper text below the field
+ * @param {string}   [props.error]         - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true] - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]     - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]          - Meta text shown right-aligned next to label
+ * @param {Function} [props.onBlur]        - (event) => void
+ * @param {Function} [props.onFocus]       - (event) => void
+ * @param {string}   [props.className]
  *
  * @example
  * <SelectField
@@ -1514,17 +1569,23 @@ export function SelectField({
  *
  * @param {Object}   props
  * @param {string}   [props.label]
- * @param {string}   [props.value]        - Selected value
- * @param {Function} [props.onChange]     - (value, option) => void
+ * @param {string}   [props.value]          - Selected value
+ * @param {Function} [props.onChange]       - (value, option) => void
  * @param {Function} [props.setValue]
- * @param {Array}    props.options         - [{ value, label, description? }]
+ * @param {Array}    props.options           - [{ value, label, description? }]
  * @param {string}   [props.placeholder]
- * @param {Array}    [props.suggestions]
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {boolean}  [props.clearable]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {Array}    [props.suggestions]     - Quick-select chips [{value, label}] | ["str"]
+ * @param {string}   [props.name]            - Native name attribute
+ * @param {string}   [props.id]              - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {boolean}  [props.clearable=false] - Show ✕ button to clear selection
+ * @param {string}   [props.helperText]      - Muted helper text below the field
+ * @param {string}   [props.error]           - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true]  - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]       - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]            - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <SearchableSelect
@@ -1707,17 +1768,23 @@ export function SearchableSelect({
 /**
  * DateField — Native date input with styled calendar icon.
  *
- * @param {Object}  props
- * @param {string}  [props.label]
- * @param {string}  [props.value]       - "YYYY-MM-DD"
- * @param {Function}[props.onChange]    - (value, event) => void
- * @param {Function}[props.setValue]
- * @param {string}  [props.min]
- * @param {string}  [props.max]
- * @param {boolean} [props.required]
- * @param {boolean} [props.disabled]
- * @param {string}  [props.helperText]
- * @param {string}  [props.error]
+ * @param {Object}   props
+ * @param {string}   [props.label]
+ * @param {string}   [props.value]          - "YYYY-MM-DD"
+ * @param {Function} [props.onChange]       - (value, event) => void
+ * @param {Function} [props.setValue]
+ * @param {string}   [props.min]            - Minimum date "YYYY-MM-DD"
+ * @param {string}   [props.max]            - Maximum date "YYYY-MM-DD"
+ * @param {string}   [props.name]           - Native name attribute
+ * @param {string}   [props.id]             - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {string}   [props.helperText]     - Muted helper text below the field
+ * @param {string}   [props.error]          - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true] - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]      - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]           - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <DateField
@@ -1788,17 +1855,23 @@ export function DateField({
 /**
  * TimeField — Native time input.
  *
- * @param {Object}  props
- * @param {string}  [props.label]
- * @param {string}  [props.value]     - "HH:MM"
- * @param {Function}[props.onChange]  - (value, event) => void
- * @param {Function}[props.setValue]
- * @param {string}  [props.min]
- * @param {string}  [props.max]
- * @param {boolean} [props.required]
- * @param {boolean} [props.disabled]
- * @param {string}  [props.helperText]
- * @param {string}  [props.error]
+ * @param {Object}   props
+ * @param {string}   [props.label]
+ * @param {string}   [props.value]          - "HH:MM"
+ * @param {Function} [props.onChange]       - (value, event) => void
+ * @param {Function} [props.setValue]
+ * @param {string}   [props.min]            - Minimum time "HH:MM"
+ * @param {string}   [props.max]            - Maximum time "HH:MM"
+ * @param {string}   [props.name]           - Native name attribute
+ * @param {string}   [props.id]             - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {string}   [props.helperText]     - Muted helper text below the field
+ * @param {string}   [props.error]          - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true] - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]      - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]           - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <TimeField
@@ -1874,18 +1947,24 @@ const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 /**
  * CalendarField — Custom calendar date picker.
  *
- * @param {Object}  props
- * @param {string}  [props.label]
- * @param {string}  [props.value]         - "YYYY-MM-DD"
- * @param {Function}[props.onChange]       - (value: "YYYY-MM-DD") => void
- * @param {Function}[props.setValue]
- * @param {string}  [props.min]
- * @param {string}  [props.max]
- * @param {string}  [props.placeholder]
- * @param {boolean} [props.required]
- * @param {boolean} [props.disabled]
- * @param {string}  [props.helperText]
- * @param {string}  [props.error]
+ * @param {Object}   props
+ * @param {string}   [props.label]
+ * @param {string}   [props.value]          - "YYYY-MM-DD"
+ * @param {Function} [props.onChange]       - (value: "YYYY-MM-DD") => void
+ * @param {Function} [props.setValue]
+ * @param {string}   [props.min]            - Minimum selectable date "YYYY-MM-DD"
+ * @param {string}   [props.max]            - Maximum selectable date "YYYY-MM-DD"
+ * @param {string}   [props.placeholder]
+ * @param {string}   [props.name]           - Native name attribute (hidden input)
+ * @param {string}   [props.id]             - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {string}   [props.helperText]     - Muted helper text below the field
+ * @param {string}   [props.error]          - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true] - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]      - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]           - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <CalendarField
@@ -2085,14 +2164,19 @@ export function CalendarField({
  * @param {string}   [props.value]           - Selected value
  * @param {Function} [props.onChange]         - (value) => void
  * @param {Function} [props.setValue]
- * @param {Array}    props.options             - [{ value, label, description?, disabled? }]
- * @param {string}   [props.direction]        - "vertical" | "horizontal"
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
+ * @param {Array}    props.options             - [{ value, label, description?, disabled? }] | ["str"]
+ * @param {string}   [props.direction="vertical"] - "vertical" | "horizontal"
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {boolean}  [props.hideLabel=false]  - Hide the group label
  * @param {boolean}  [props.fieldset=false]   - Wrap in <fieldset>
  * @param {string}   [props.legend]           - <legend> text (requires fieldset=true)
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {string}   [props.helperText]       - Muted helper text below the group
+ * @param {string}   [props.error]            - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true]   - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]        - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]             - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <RadioGroup
@@ -2283,6 +2367,11 @@ export function RadioField({
                     {description && <span className="ff-radio-description">{description}</span>}
                 </span>
                 {info && <span className="ff-label-meta ff-radio-single-info">{info}</span>}
+                {checked && (
+                    <span className="ff-field-action-tick" aria-hidden="true">
+                        <Icon.Check />
+                    </span>
+                )}
             </div>
             <FormFieldMessage hasError={hasError} helperText={helperText} error={error} errors={errors} />
         </div>
@@ -2298,18 +2387,24 @@ export function RadioField({
  *
  * @param {Object}   props
  * @param {string}   [props.label]
- * @param {Array}    [props.value]            - Array of selected values
- * @param {Function} [props.onChange]          - (values: string[]) => void
+ * @param {Array}    [props.value=[]]        - Array of selected values
+ * @param {Function} [props.onChange]         - (values: string[]) => void
  * @param {Function} [props.setValue]
- * @param {Array}    props.options              - [{ value, label, description?, disabled? }]
- * @param {string}   [props.direction]         - "vertical" | "horizontal"
- * @param {number}   [props.min]
- * @param {number}   [props.max]               - Max selections allowed
- * @param {boolean}  [props.disabled]
- * @param {boolean}  [props.fieldset=false]    - Wrap in <fieldset>
- * @param {string}   [props.legend]            - <legend> text (requires fieldset=true)
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {Array}    props.options             - [{ value, label, description?, disabled? }] | ["str"]
+ * @param {string}   [props.direction="vertical"] - "vertical" | "horizontal"
+ * @param {number}   [props.min]              - Minimum required selections
+ * @param {number}   [props.max]              - Maximum allowed selections
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {boolean}  [props.hideLabel=false]  - Hide the group label
+ * @param {boolean}  [props.fieldset=false]   - Wrap in <fieldset>
+ * @param {string}   [props.legend]           - <legend> text (requires fieldset=true)
+ * @param {string}   [props.helperText]       - Muted helper text below the group
+ * @param {string}   [props.error]            - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true]   - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]        - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]             - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <CheckboxGroup
@@ -2504,6 +2599,11 @@ export function CheckboxField({
                     {description && <span className="ff-checkbox-description">{description}</span>}
                 </span>
                 {info && <span className="ff-label-meta ff-checkbox-single-info">{info}</span>}
+                {value && (
+                    <span className="ff-field-action-tick" aria-hidden="true">
+                        <Icon.Check />
+                    </span>
+                )}
             </div>
             <FormFieldMessage hasError={hasError} helperText={helperText} error={error} errors={errors} />
         </div>
@@ -2634,17 +2734,22 @@ export function SwitchField({
  *
  * @param {Object}   props
  * @param {string}   [props.label]
- * @param {string[]} [props.value]        - Controlled array of tags
- * @param {Function} [props.onChange]      - (tags: string[]) => void
+ * @param {string[]} [props.value=[]]       - Controlled array of tags
+ * @param {Function} [props.onChange]        - (tags: string[]) => void
  * @param {Function} [props.setValue]
  * @param {string}   [props.placeholder]
- * @param {number}   [props.max]           - Max number of tags
- * @param {number}   [props.maxLength]     - Max chars per tag
- * @param {string[]} [props.suggestions]
- * @param {Function} [props.validate]     - (tag: string) => string | null
- * @param {boolean}  [props.disabled]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {number}   [props.max]             - Max number of tags
+ * @param {number}   [props.maxLength]       - Max chars per tag
+ * @param {string[]} [props.suggestions]     - Clickable suggestion chips
+ * @param {Function} [props.validate]        - (tag: string) => string | null — return error string to reject
+ * @param {boolean}  [props.disabled=false]
+ * @param {string}   [props.id]             - Native id (auto-generated if omitted)
+ * @param {string}   [props.helperText]     - Muted helper text below the field
+ * @param {string}   [props.error]          - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true] - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]      - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]           - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <TagsField
@@ -2797,14 +2902,21 @@ export function TagsField({
  * @param {Object}   props
  * @param {string}   [props.label]
  * @param {string}   [props.value]
- * @param {Function} [props.onChange]     - (value, event) => void
+ * @param {Function} [props.onChange]       - (value, event) => void
  * @param {Function} [props.setValue]
  * @param {string}   [props.placeholder]
- * @param {boolean}  [props.showPreview=true]
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {boolean}  [props.showPreview=true]  - Show favicon + link preview below field
+ * @param {string}   [props.name]           - Native name attribute
+ * @param {string}   [props.id]             - Native id (auto-generated if omitted)
+ * @param {number}   [props.maxLength]      - Maximum character count
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {string}   [props.helperText]     - Muted helper text below the field
+ * @param {string}   [props.error]          - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true] - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]      - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]           - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <UrlField
@@ -4412,23 +4524,30 @@ export function FilePickerField({
  *
  * @param {Object}    props
  * @param {string}    [props.label]
- * @param {string}    [props.value]              - Hex color e.g. "#d4a843"
- * @param {Function}  [props.onChange]           - (hex: string) => void
+ * @param {string}    [props.value="#d4a843"]     - Hex color e.g. "#d4a843"
+ * @param {Function}  [props.onChange]            - (hex: string) => void
  * @param {Function}  [props.setValue]
  * @param {"swatches"|"input"|"picker"} [props.variant="swatches"]
  *   - "swatches" — preset color grid + optional hex input below
  *   - "input"    — color wheel trigger button + hex text input + RGB chips
  *   - "picker"   — pure native color wheel only; no swatches, no hex text input
- * @param {string[]}  [props.swatches]           - Preset hex colors (swatches variant only)
- * @param {boolean}   [props.allowCustom=true]   - Show hex input below swatches (swatches variant only)
- * @param {boolean}   [props.disabled]
- * @param {number}    [props.debounce=0]         - ms to debounce onChange while dragging the color wheel (0 = off).
- *                                                 Useful for expensive side-effects (API calls, canvas redraws).
- *                                                 Note: setValue always fires immediately; only onChange is debounced.
- * @param {boolean}   [props.fieldset=false]     - Turn input border into a fieldset legend
- * @param {string}    [props.legend]             - Legend text (requires fieldset=true)
- * @param {string}    [props.helperText]
- * @param {string}    [props.error]
+ * @param {string[]}  [props.swatches]            - Preset hex colors (swatches variant only)
+ * @param {boolean}   [props.allowCustom=true]    - Show hex input below swatches (swatches variant only)
+ * @param {string}    [props.id]                  - Native id (auto-generated if omitted)
+ * @param {boolean}   [props.required=false]
+ * @param {boolean}   [props.disabled=false]
+ * @param {number}    [props.debounce=0]          - ms to debounce onChange while dragging the color wheel (0 = off).
+ *                                                  Useful for expensive side-effects (API calls, canvas redraws).
+ *                                                  Note: setValue always fires immediately; only onChange is debounced.
+ * @param {string}    [props.helperText]          - Muted helper text below the field
+ * @param {string}    [props.error]               - Error message; also triggers error style
+ * @param {boolean}   [props.showError=true]      - Set false to suppress error UI
+ * @param {Array}     [props.errors=[]]           - Structured error list [{file?, message, code?}]
+ * @param {string}    [props.info]                - Meta text shown right-aligned next to label
+ * @param {boolean}   [props.hideLabel=false]     - Hide the label entirely
+ * @param {boolean}   [props.fieldset=false]      - Turn input border into a fieldset legend
+ * @param {string}    [props.legend]              - Legend text (requires fieldset=true)
+ * @param {string}    [props.className]
  *
  * @example
  * // Swatches palette:
@@ -4713,14 +4832,20 @@ export function ColorPickerField({
  *
  * @param {Object}       props
  * @param {string}       [props.label]
- * @param {boolean|null} [props.value]        - true | false | null (unset)
- * @param {Function}     [props.onChange]     - (value: boolean | null) => void
+ * @param {boolean|null} [props.value=null]      - true | false | null (unset)
+ * @param {Function}     [props.onChange]         - (value: boolean | null) => void
  * @param {Function}     [props.setValue]
  * @param {string}       [props.trueLabel="Yes"]
  * @param {string}       [props.falseLabel="No"]
- * @param {boolean}      [props.disabled]
- * @param {string}       [props.helperText]
- * @param {string}       [props.error]
+ * @param {boolean}      [props.disabled=false]
+ * @param {boolean}      [props.required=false]
+ * @param {string}       [props.id]              - Native id (auto-generated if omitted)
+ * @param {string}       [props.helperText]      - Muted helper text below the field
+ * @param {string}       [props.error]           - Error message; also triggers error style
+ * @param {boolean}      [props.showError=true]  - Set false to suppress error UI
+ * @param {Array}        [props.errors=[]]       - Structured error list [{file?, message, code?}]
+ * @param {string}       [props.info]            - Meta text shown right-aligned next to label
+ * @param {string}       [props.className]
  *
  * @example
  * <BooleanField label="Accept Terms" value={accepted} setValue={setAccepted} trueLabel="I agree" falseLabel="Decline" />
@@ -4798,15 +4923,20 @@ export function BooleanField({
  *
  * @param {Object}   props
  * @param {string}   [props.label]
- * @param {string}   [props.value]          - Raw JSON string (controlled)
- * @param {Function} [props.onChange]       - (raw: string, parsed: object|null) => void
- * @param {Function} [props.setValue]       - (raw: string) => void
- * @param {number}   [props.rows=8]         - Visible textarea rows
- * @param {boolean}  [props.disabled]
- * @param {boolean}  [props.required]
+ * @param {string}   [props.value]           - Raw JSON string (controlled)
+ * @param {Function} [props.onChange]        - (raw: string, parsed: object|null) => void
+ * @param {Function} [props.setValue]        - (raw: string) => void
+ * @param {number}   [props.rows=8]          - Visible textarea rows
+ * @param {boolean}  [props.disabled=false]
+ * @param {boolean}  [props.required=false]
  * @param {string}   [props.placeholder]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {string}   [props.id]             - Native id (auto-generated if omitted)
+ * @param {string}   [props.helperText]     - Muted helper text below the field
+ * @param {string}   [props.error]          - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true] - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]      - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]           - Meta text shown right-aligned next to label
+ * @param {string}   [props.className]
  *
  * @example
  * <JsonField label="Config" value={json} setValue={setJson} rows={10} helperText="Paste valid JSON" />
@@ -4993,25 +5123,28 @@ function getAvatar(item) {
  *
  * @param {Object}   props
  * @param {string}   [props.label]
- * @param {string}   [props.value]              - Controlled query string
- * @param {Function} [props.onChange]           - (value, event) => void
+ * @param {string}   [props.value]               - Controlled query string
+ * @param {Function} [props.onChange]            - (value, event) => void
  * @param {Function} [props.setValue]
- * @param {Function} [props.onSearch]           - (query) => void — called on Enter or search button
- * @param {number}   [props.debounce=0]         - ms to debounce onSearch while typing (0 = off)
- * @param {number}   [props.throttle=0]         - ms to throttle onSearch while typing (0 = off).
- *                                                Ignored when debounce > 0.
- * @param {Array}    [props.results=[]]         - Array of strings or objects
- * @param {Function} [props.onSelect]           - (item) => void
- * @param {string}   [props.resultFormat]       - "simple" (default) | "rich"
- * @param {boolean}  [props.showInnerSearch]    - Filter bar inside popup (default true)
- * @param {number}   [props.popupMaxHeight]     - px, default 320
- * @param {boolean}  [props.loading]
+ * @param {Function} [props.onSearch]            - (query) => void — called on Enter or search button
+ * @param {number}   [props.debounce=0]          - ms to debounce onSearch while typing (0 = off)
+ * @param {number}   [props.throttle=0]          - ms to throttle onSearch while typing (0 = off). Ignored when debounce > 0.
+ * @param {Array}    [props.results=[]]          - Array of strings or objects
+ * @param {Function} [props.onSelect]            - (item) => void — called when user picks a result
+ * @param {"simple"|"rich"} [props.resultFormat="simple"] - Display style for result items
+ * @param {boolean}  [props.showInnerSearch=true] - Filter bar inside popup
+ * @param {number}   [props.popupMaxHeight=320]  - Max height of results popup in px
+ * @param {boolean}  [props.loading=false]       - Show spinner in popup
  * @param {string}   [props.placeholder]
- * @param {string}   [props.emptyText]
- * @param {boolean}  [props.required]
- * @param {boolean}  [props.disabled]
- * @param {string}   [props.helperText]
- * @param {string}   [props.error]
+ * @param {string}   [props.emptyText]           - Text shown when no results found
+ * @param {string}   [props.id]                  - Native id (auto-generated if omitted)
+ * @param {boolean}  [props.required=false]
+ * @param {boolean}  [props.disabled=false]
+ * @param {string}   [props.helperText]          - Muted helper text below the field
+ * @param {string}   [props.error]               - Error message; also triggers error style
+ * @param {boolean}  [props.showError=true]      - Set false to suppress error UI
+ * @param {Array}    [props.errors=[]]           - Structured error list [{file?, message, code?}]
+ * @param {string}   [props.info]                - Meta text shown right-aligned next to label
  * @param {string}   [props.className]
  *
  * @example
