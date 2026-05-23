@@ -1,861 +1,638 @@
 import { useState } from "react";
+
+// ─── Paste the entire FormComponents source above this line ───
 import {
-    FormFieldMessage,
-    TextField,
-    EmailField,
-    PhoneField,
-    PasswordField,
-    TextArea,
-    NumberField,
-    SelectField,
-    SearchableSelect,
-    DateField,
-    TimeField,
-    CalendarField,
-    RadioGroup,
-    CheckboxGroup,
-    SwitchField,
-    TagsField,
-    UrlField,
-    ImagePickerField,
-    VideoPickerField,
-    FilePickerField,
-    SearchField,
-} from "./formFields";
+  FormFieldMessage, FormFieldErrors, FieldCard, FieldsetField,
+  TextField, EmailField, PhoneField, PasswordField, TextArea,
+  NumberField, SelectField, SearchableSelect, DateField, TimeField,
+  CalendarField, RadioGroup, RadioField, CheckboxGroup, CheckboxField,
+  SwitchField, TagsField, UrlField, ImagePickerField, VideoPickerField,
+  FilePickerField, ColorPickerField, BooleanField, JsonField, SearchField,
+} from "./FormComponents";
 
-/* ─────────────────────────────────────────────────────────────────
-   Mock async search — SearchField demo-তে ব্যবহার হবে
-───────────────────────────────────────────────────────────────── */
-const MOCK_USERS = [
-    { id: 1, name: "Alice Rahman", email: "alice@example.com", description: "Frontend Engineer" },
-    { id: 2, name: "Bob Hossain", email: "bob@example.com", description: "Product Manager" },
-    { id: 3, name: "Carol Islam", email: "carol@example.com", description: "UI/UX Designer" },
-    { id: 4, name: "David Chowdhury", email: "david@example.com", description: "Backend Engineer" },
-    { id: 5, name: "Eva Sultana", email: "eva@example.com", description: "Data Analyst" },
-];
+export default function AllFieldExamples() {
+  // ── State ──────────────────────────────────────────────────────────
+  const [name, setName]           = useState("");
+  const [email, setEmail]         = useState("");
+  const [phone, setPhone]         = useState("");
+  const [password, setPassword]   = useState("");
+  const [bio, setBio]             = useState("");
+  const [qty, setQty]             = useState(1);
+  const [country, setCountry]     = useState("");
+  const [framework, setFramework] = useState("");
+  const [dob, setDob]             = useState("");
+  const [meetTime, setMeetTime]   = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [plan, setPlan]           = useState("");
+  const [shipSame, setShipSame]   = useState(false);
+  const [skills, setSkills]       = useState([]);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [darkMode, setDarkMode]   = useState(false);
+  const [stack, setStack]         = useState([]);
+  const [portfolio, setPortfolio] = useState("");
+  const [avatar, setAvatar]       = useState([]);
+  const [gallery, setGallery]     = useState([]);
+  const [introVideo, setIntroVideo] = useState([]);
+  const [resume, setResume]       = useState([]);
+  const [attachments, setAttachments] = useState([]);
+  const [brandColor, setBrandColor]   = useState("#d4a843");
+  const [accentColor, setAccentColor] = useState("#60a5fa");
+  const [pickedColor, setPickedColor] = useState("#4ade80");
+  const [accepted, setAccepted]   = useState(null);
+  const [config, setConfig]       = useState('{\n  "debug": true,\n  "version": 1\n}');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
-/* ═══════════════════════════════════════════════════════════════
-   1. FormFieldMessage
-   — Error / helper message renderer. Standalone usage example.
-═══════════════════════════════════════════════════════════════ */
-export function FormFieldMessageExample() {
-    return (
-        <div>
-            {/* Error state */}
-            <FormFieldMessage
-                hasError={true}
-                error="This field is required."
-                helperText="We'll never share your data."
-            />
+  // ── Helpers ────────────────────────────────────────────────────────
+  const fakeSearch = (q) => {
+    const all = [
+      { name: "Alice Johnson", email: "alice@example.com", avatar: "" },
+      { name: "Bob Smith",     email: "bob@example.com",   avatar: "" },
+      { name: "Carol White",   email: "carol@example.com", avatar: "" },
+      { name: "David Lee",     email: "david@example.com", avatar: "" },
+    ];
+    setSearchResults(all.filter(u => u.name.toLowerCase().includes(q.toLowerCase())));
+  };
 
-            {/* Helper state (hasError=false হলে helperText দেখায়) */}
-            <FormFieldMessage
-                hasError={false}
-                error=""
-                helperText="Enter your registered email address."
-            />
-        </div>
-    );
-}
+  const s = { marginBottom: "2rem" };
 
-/* ═══════════════════════════════════════════════════════════════
-   2. TextField
-═══════════════════════════════════════════════════════════════ */
-export function TextFieldExample() {
-    const [name, setName] = useState("");
-    const [error, setError] = useState("");
+  return (
+    <div style={{ maxWidth: 640, margin: "0 auto", padding: "2rem 1rem", fontFamily: "sans-serif" }}>
 
-    const validate = () => {
-        setError(name.trim() === "" ? "Full name is required." : "");
-    };
-
-    return (
+      {/* ── 1. TextField ──────────────────────────────────────────── */}
+      <div style={s}>
         <TextField
-            label="Full Name"
+          label="Full Name"
+          value={name}
+          setValue={setName}
+          placeholder="John Doe"
+          required
+          maxLength={80}
+          info="Public display name"
+          helperText="As it appears on your ID"
+          error={name.length > 0 && name.length < 3 ? "Name must be at least 3 characters" : ""}
+          leftIcon={<span>👤</span>}
+          floatingLabel={false}
+          throttle={200}
+          onChange={(v) => console.log("TextField onChange:", v)}
+          onBlur={() => console.log("blur")}
+        />
+      </div>
+
+      {/* ── 2. EmailField ─────────────────────────────────────────── */}
+      <div style={s}>
+        <EmailField
+          label="Email Address"
+          value={email}
+          setValue={setEmail}
+          placeholder="you@example.com"
+          required
+          validateFormat
+          info="Work email preferred"
+          helperText="We'll never share your email."
+          floatingLabel={false}
+          fieldset={false}
+          legend=""
+          onChange={(v) => console.log("EmailField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 3. PhoneField ─────────────────────────────────────────── */}
+      <div style={s}>
+        <PhoneField
+          label="Phone Number"
+          value={phone}
+          setValue={setPhone}
+          placeholder="1712 345 678"
+          defaultCountryCode="+880"
+          required
+          info="Mobile preferred"
+          helperText="Include area code"
+          error=""
+          onChange={(v) => console.log("PhoneField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 4. PasswordField ──────────────────────────────────────── */}
+      <div style={s}>
+        <PasswordField
+          label="Password"
+          value={password}
+          setValue={setPassword}
+          placeholder="Enter password"
+          required
+          maxLength={128}
+          autoFocus={false}
+          info="Min 8 chars"
+          helperText="Include a number and a symbol"
+          error={password.length > 0 && password.length < 8 ? "Too short" : ""}
+          onChange={(v) => console.log("PasswordField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 5. TextArea ───────────────────────────────────────────── */}
+      <div style={s}>
+        <TextArea
+          label="Bio"
+          value={bio}
+          setValue={setBio}
+          placeholder="Tell us about yourself..."
+          rows={4}
+          maxLength={500}
+          minLength={10}
+          required
+          info="Shown on your profile"
+          helperText="Keep it concise and friendly."
+          error={bio.length > 0 && bio.length < 10 ? "Too short" : ""}
+          throttle={300}
+          onChange={(v) => console.log("TextArea onChange:", v)}
+        />
+      </div>
+
+      {/* ── 6. NumberField ────────────────────────────────────────── */}
+      <div style={s}>
+        <NumberField
+          label="Quantity"
+          value={qty}
+          setValue={setQty}
+          min={1}
+          max={99}
+          step={1}
+          placeholder="0"
+          required
+          info="Max 99"
+          helperText="How many units do you need?"
+          error={qty > 99 ? "Exceeds maximum" : ""}
+          onChange={(v) => console.log("NumberField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 7. SelectField ────────────────────────────────────────── */}
+      <div style={s}>
+        <SelectField
+          label="Country"
+          value={country}
+          setValue={setCountry}
+          options={[
+            { value: "bd", label: "Bangladesh" },
+            { value: "us", label: "United States" },
+            { value: "gb", label: "United Kingdom" },
+            { value: "in", label: "India" },
+          ]}
+          placeholder="Select your country"
+          suggestions={[{ value: "bd", label: "Bangladesh" }, { value: "us", label: "United States" }]}
+          required
+          info="Billing country"
+          helperText="Used for tax calculations"
+          error={!country ? "" : ""}
+          onChange={(v) => console.log("SelectField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 8. SearchableSelect ───────────────────────────────────── */}
+      <div style={s}>
+        <SearchableSelect
+          label="Framework"
+          value={framework}
+          setValue={setFramework}
+          options={[
+            { value: "react",   label: "React",   description: "Meta's UI library" },
+            { value: "vue",     label: "Vue.js",  description: "Progressive framework" },
+            { value: "svelte",  label: "Svelte",  description: "Cybernetically enhanced" },
+            { value: "angular", label: "Angular", description: "Google's platform" },
+            { value: "solid",   label: "SolidJS", description: "Fine-grained reactivity" },
+          ]}
+          placeholder="Search frameworks..."
+          suggestions={[{ value: "react", label: "React" }]}
+          clearable
+          required
+          info="Primary stack"
+          helperText="Choose your main frontend framework"
+          error=""
+          onChange={(v) => console.log("SearchableSelect onChange:", v)}
+        />
+      </div>
+
+      {/* ── 9. DateField ──────────────────────────────────────────── */}
+      <div style={s}>
+        <DateField
+          label="Date of Birth"
+          value={dob}
+          setValue={setDob}
+          max={new Date().toISOString().split("T")[0]}
+          min="1900-01-01"
+          required
+          info="DD/MM/YYYY"
+          helperText="You must be at least 18 years old"
+          error=""
+          onChange={(v) => console.log("DateField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 10. TimeField ─────────────────────────────────────────── */}
+      <div style={s}>
+        <TimeField
+          label="Meeting Time"
+          value={meetTime}
+          setValue={setMeetTime}
+          min="09:00"
+          max="17:00"
+          required
+          info="24-hour format"
+          helperText="Business hours: 9 AM – 5 PM"
+          error=""
+          onChange={(v) => console.log("TimeField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 11. CalendarField ─────────────────────────────────────── */}
+      <div style={s}>
+        <CalendarField
+          label="Event Date"
+          value={eventDate}
+          setValue={setEventDate}
+          min={new Date().toISOString().split("T")[0]}
+          placeholder="Pick a date"
+          required
+          info="Future dates only"
+          helperText="Select a future date for your event"
+          error=""
+          onChange={(v) => console.log("CalendarField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 12. RadioGroup ────────────────────────────────────────── */}
+      <div style={s}>
+        <RadioGroup
+          label="Subscription Plan"
+          value={plan}
+          setValue={setPlan}
+          options={[
+            { value: "free",  label: "Free",  description: "Basic features only" },
+            { value: "pro",   label: "Pro",   description: "All features · $9/mo" },
+            { value: "team",  label: "Team",  description: "For teams · $29/mo", disabled: false },
+          ]}
+          direction="vertical"
+          required
+          info="Billed monthly"
+          helperText="You can upgrade anytime"
+          error={!plan ? "" : ""}
+          onChange={(v) => console.log("RadioGroup onChange:", v)}
+        />
+      </div>
+
+      {/* ── 12b. RadioField ───────────────────────────────────────── */}
+      <div style={s}>
+        <RadioField
+          label="Ship to billing address"
+          description="Use the address on file for delivery."
+          checked={shipSame}
+          setValue={setShipSame}
+          showSelectedStyle
+          required={false}
+          info="Saves a step"
+          helperText=""
+          error=""
+          onChange={(v) => console.log("RadioField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 13. CheckboxGroup ─────────────────────────────────────── */}
+      <div style={s}>
+        <CheckboxGroup
+          label="Tech Skills"
+          value={skills}
+          setValue={setSkills}
+          options={["React", "TypeScript", "Node.js", "GraphQL", "PostgreSQL", "Docker"]}
+          direction="horizontal"
+          max={3}
+          required
+          info="Pick up to 3"
+          helperText="Select your strongest skills"
+          error={skills.length === 0 ? "" : ""}
+          onChange={(v) => console.log("CheckboxGroup onChange:", v)}
+        />
+      </div>
+
+      {/* ── 13b. CheckboxField ────────────────────────────────────── */}
+      <div style={s}>
+        <CheckboxField
+          label="Accept Terms & Conditions"
+          description="You agree to our terms of service and privacy policy."
+          value={acceptTerms}
+          setValue={setAcceptTerms}
+          showCheckedStyle
+          required
+          info="Required"
+          helperText=""
+          error={!acceptTerms ? "" : ""}
+          onChange={(v) => console.log("CheckboxField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 14. SwitchField ───────────────────────────────────────── */}
+      <div style={s}>
+        <SwitchField
+          label="Preferences"
+          switchLabel="Dark Mode"
+          description="Use dark theme across the app"
+          value={darkMode}
+          setValue={setDarkMode}
+          switchPosition="right"
+          showOnClass={false}
+          disabled={false}
+          info=""
+          helperText="You can change this anytime"
+          error=""
+          onChange={(v) => console.log("SwitchField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 15. TagsField ─────────────────────────────────────────── */}
+      <div style={s}>
+        <TagsField
+          label="Tech Stack"
+          value={stack}
+          setValue={setStack}
+          placeholder="Add a technology..."
+          suggestions={["React", "TypeScript", "Tailwind", "Node.js", "Prisma"]}
+          max={8}
+          maxLength={20}
+          disabled={false}
+          info="Max 8 tags"
+          helperText="Press Enter or comma to add"
+          error=""
+          validate={(tag) => tag.length < 2 ? "Tag too short" : null}
+          onChange={(v) => console.log("TagsField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 16. UrlField ──────────────────────────────────────────── */}
+      <div style={s}>
+        <UrlField
+          label="Portfolio Website"
+          value={portfolio}
+          setValue={setPortfolio}
+          placeholder="https://yoursite.com"
+          showPreview
+          required={false}
+          maxLength={200}
+          info="Public URL"
+          helperText="Your public portfolio link"
+          error=""
+          onChange={(v) => console.log("UrlField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 17. ImagePickerField — avatar variant ─────────────────── */}
+      <div style={s}>
+        <ImagePickerField
+          label="Profile Photo"
+          value={avatar}
+          setValue={setAvatar}
+          multiple={false}
+          variant="avatar"
+          avatarShape="circle"
+          avatarPosition="left"
+          showDot
+          dotDisabled={false}
+          showFileName
+          maxSize={2 * 1024 * 1024}
+          helperText="Max 2 MB · JPG or PNG"
+          error=""
+          onChange={(files) => console.log("ImagePickerField (avatar) onChange:", files)}
+        />
+      </div>
+
+      {/* ── 17b. ImagePickerField — multi grid ────────────────────── */}
+      <div style={s}>
+        <ImagePickerField
+          label="Gallery Images"
+          value={gallery}
+          setValue={setGallery}
+          multiple
+          maxFiles={6}
+          maxSize={5 * 1024 * 1024}
+          previewMode="grid"
+          helperText="Up to 6 images · Max 5 MB each"
+          error=""
+          onChange={(files) => console.log("ImagePickerField (gallery) onChange:", files)}
+        />
+      </div>
+
+      {/* ── 18. VideoPickerField ──────────────────────────────────── */}
+      <div style={s}>
+        <VideoPickerField
+          label="Intro Video"
+          value={introVideo}
+          setValue={setIntroVideo}
+          multiple={false}
+          variant="card"
+          maxSize={100 * 1024 * 1024}
+          previewMode="list"
+          helperText="Max 100 MB · MP4 recommended"
+          error=""
+          onChange={(files) => console.log("VideoPickerField onChange:", files)}
+        />
+      </div>
+
+      {/* ── 19. FilePickerField — single ──────────────────────────── */}
+      <div style={s}>
+        <FilePickerField
+          label="Resume / CV"
+          value={resume}
+          setValue={setResume}
+          accept=".pdf,.doc,.docx"
+          multiple={false}
+          variant="card"
+          maxSize={5 * 1024 * 1024}
+          helperText="PDF or Word · Max 5 MB"
+          error=""
+          onChange={(files) => console.log("FilePickerField (resume) onChange:", files)}
+        />
+      </div>
+
+      {/* ── 19b. FilePickerField — multi list ─────────────────────── */}
+      <div style={s}>
+        <FilePickerField
+          label="Attachments"
+          value={attachments}
+          setValue={setAttachments}
+          accept=".pdf,.png,.jpg,.zip"
+          multiple
+          maxFiles={5}
+          maxSize={10 * 1024 * 1024}
+          previewMode="list"
+          helperText="Up to 5 files · Max 10 MB each"
+          error=""
+          onChange={(files) => console.log("FilePickerField (attachments) onChange:", files)}
+        />
+      </div>
+
+      {/* ── 20a. ColorPickerField — swatches ──────────────────────── */}
+      <div style={s}>
+        <ColorPickerField
+          label="Brand Color"
+          value={brandColor}
+          setValue={setBrandColor}
+          variant="swatches"
+          allowCustom
+          swatches={[
+            "#d4a843","#f87171","#fb923c","#fbbf24",
+            "#4ade80","#34d399","#60a5fa","#818cf8",
+            "#a78bfa","#e879f9","#f472b6","#94a3b8",
+            "#ffffff","#000000",
+          ]}
+          info="Brand kit"
+          helperText="Pick from the palette or enter a custom hex"
+          error=""
+          debounce={0}
+          onChange={(hex) => console.log("ColorPickerField (swatches) onChange:", hex)}
+        />
+      </div>
+
+      {/* ── 20b. ColorPickerField — input ─────────────────────────── */}
+      <div style={s}>
+        <ColorPickerField
+          label="Accent Color"
+          value={accentColor}
+          setValue={setAccentColor}
+          variant="input"
+          info="Hex value"
+          helperText="Click the swatch to open the color wheel"
+          error=""
+          debounce={150}
+          onChange={(hex) => console.log("ColorPickerField (input) onChange:", hex)}
+        />
+      </div>
+
+      {/* ── 20c. ColorPickerField — picker ────────────────────────── */}
+      <div style={s}>
+        <ColorPickerField
+          label="Highlight Color"
+          value={pickedColor}
+          setValue={setPickedColor}
+          variant="picker"
+          info="RGB breakdown"
+          helperText="Click the color wheel to pick"
+          error=""
+          debounce={0}
+          onChange={(hex) => console.log("ColorPickerField (picker) onChange:", hex)}
+        />
+      </div>
+
+      {/* ── 21. BooleanField ──────────────────────────────────────── */}
+      <div style={s}>
+        <BooleanField
+          label="Accept Terms"
+          value={accepted}
+          setValue={setAccepted}
+          trueLabel="I agree"
+          falseLabel="Decline"
+          required
+          info="Required to continue"
+          helperText="Click the same button again to deselect"
+          error={accepted === null ? "" : ""}
+          onChange={(v) => console.log("BooleanField onChange:", v)}
+        />
+      </div>
+
+      {/* ── 22. JsonField ─────────────────────────────────────────── */}
+      <div style={s}>
+        <JsonField
+          label="Config JSON"
+          value={config}
+          setValue={setConfig}
+          rows={8}
+          required={false}
+          placeholder={'{\n  "key": "value"\n}'}
+          info="Raw JSON"
+          helperText="Paste valid JSON — use Format to prettify"
+          error=""
+          onChange={(raw, parsed) => console.log("JsonField onChange:", parsed)}
+        />
+      </div>
+
+      {/* ── 23. SearchField ───────────────────────────────────────── */}
+      <div style={s}>
+        <SearchField
+          label="Search Users"
+          value={searchQuery}
+          setValue={setSearchQuery}
+          onSearch={fakeSearch}
+          debounce={300}
+          results={searchResults}
+          resultFormat="rich"
+          showInnerSearch
+          popupMaxHeight={280}
+          loading={false}
+          placeholder="Search by name..."
+          emptyText="No users found"
+          required={false}
+          info="Live search"
+          helperText="Type at least 1 character to search"
+          error=""
+          onSelect={(user) => {
+            console.log("SearchField onSelect:", user);
+            setSearchQuery(user.name);
+            setSearchResults([]);
+          }}
+          onChange={(v) => console.log("SearchField onChange:", v)}
+        />
+      </div>
+
+      {/* ── FormFieldMessage standalone ───────────────────────────── */}
+      <div style={s}>
+        <p style={{ fontSize: 13, color: "#888", marginBottom: 6 }}>FormFieldMessage (standalone):</p>
+        <FormFieldMessage
+          hasError={false}
+          helperText="This is a standalone helper message."
+        />
+        <FormFieldMessage
+          hasError
+          error="This is a standalone error message."
+        />
+      </div>
+
+      {/* ── FormFieldErrors standalone ────────────────────────────── */}
+      <div style={s}>
+        <p style={{ fontSize: 13, color: "#888", marginBottom: 6 }}>FormFieldErrors (standalone):</p>
+        <FormFieldErrors
+          errors={[
+            { file: "photo.jpg", message: "File exceeds the 2 MB size limit.", code: "FILE_TOO_LARGE" },
+            { message: "Atomic upload rejected: 1 error(s) found.", code: "ATOMIC_BATCH_REJECTED" },
+          ]}
+        />
+      </div>
+
+      {/* ── FieldCard wrapper ─────────────────────────────────────── */}
+      <div style={s}>
+        <FieldCard title="Personal Information" description="Used for your public profile">
+          <TextField
+            label="Display Name"
             value={name}
             setValue={setName}
-            onChange={(value, event) => console.log("onChange →", value)}
-            placeholder="John Doe"
-            type="text"
-            name="fullName"
-            id="txt-full-name"
-            required={true}
-            disabled={false}
-            readOnly={false}
-            maxLength={100}
-            autoFocus={false}
-            helperText="As it appears on your ID"
-            error={error}
-            showError={true}
-            leftIcon={<span>👤</span>}
-            rightIcon={null}
-            onBlur={validate}
-            onFocus={() => console.log("focused")}
-            onKeyDown={(e) => e.key === "Enter" && validate()}
-            className=""
-            inputClassName=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   3. EmailField
-═══════════════════════════════════════════════════════════════ */
-export function EmailFieldExample() {
-    const [email, setEmail] = useState("");
-    const [error, setError] = useState("");
-
-    return (
-        <EmailField
-            label="Email Address"
+            placeholder="Your display name"
+            helperText="Shown on your public profile"
+          />
+          <EmailField
+            label="Email"
             value={email}
             setValue={setEmail}
-            onChange={(value, event) => console.log("email →", value)}
             placeholder="you@example.com"
-            name="email"
-            id="email-field"
-            required={true}
-            disabled={false}
-            readOnly={false}
-            autoFocus={false}
-            helperText="We'll never share your email."
-            error={error}
-            showError={true}
-            onBlur={() => {
-                const valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-                setError(valid ? "" : "Enter a valid email address.");
-            }}
-            onFocus={() => setError("")}
-            onKeyDown={(e) => console.log("key →", e.key)}
-            className=""
-        />
-    );
-}
+          />
+        </FieldCard>
+      </div>
 
-/* ═══════════════════════════════════════════════════════════════
-   4. PhoneField
-═══════════════════════════════════════════════════════════════ */
-export function PhoneFieldExample() {
-    const [phone, setPhone] = useState("+880 ");
-    const [error, setError] = useState("");
+      {/* ── FieldsetField wrapper ─────────────────────────────────── */}
+      <div style={s}>
+        <FieldsetField legend="Shipping Address">
+          <TextField label="Street"   value=""  setValue={() => {}} placeholder="123 Main St" />
+          <TextField label="City"     value=""  setValue={() => {}} placeholder="Dhaka" />
+          <TextField label="ZIP Code" value=""  setValue={() => {}} placeholder="1212" />
+        </FieldsetField>
+      </div>
 
-    return (
-        <PhoneField
-            label="Phone Number"
-            value={phone}
-            setValue={setPhone}
-            onChange={(value, event) => console.log("phone →", value)}
-            placeholder="1712 345 678"
-            defaultCountryCode="+880"
-            name="phone"
-            id="phone-field"
-            required={true}
-            disabled={false}
-            readOnly={false}
-            helperText="Include your area code"
-            error={error}
-            showError={true}
-            onBlur={() => setError(phone.length < 8 ? "Enter a valid phone number." : "")}
-            onFocus={() => setError("")}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   5. PasswordField
-═══════════════════════════════════════════════════════════════ */
-export function PasswordFieldExample() {
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-
-    return (
-        <PasswordField
-            label="Password"
-            value={password}
-            setValue={setPassword}
-            onChange={(value, event) => console.log("password changed")}
-            placeholder="Enter password"
-            name="password"
-            id="password-field"
-            required={true}
-            disabled={false}
-            maxLength={128}
-            autoFocus={false}
-            helperText="Min 8 characters, include a number"
-            error={error}
-            showError={true}
-            onBlur={() => setError(password.length < 8 ? "Password must be at least 8 characters." : "")}
-            onFocus={() => setError("")}
-            onKeyDown={(e) => console.log("key →", e.key)}
-            className=""
-            inputClassName=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   6. TextArea
-═══════════════════════════════════════════════════════════════ */
-export function TextAreaExample() {
-    const [bio, setBio] = useState("");
-    const [error, setError] = useState("");
-
-    return (
-        <TextArea
-            label="Bio"
-            value={bio}
-            setValue={setBio}
-            onChange={(value, event) => console.log("textarea →", value)}
-            placeholder="Tell us about yourself..."
-            rows={5}
-            maxLength={500}
-            minLength={20}
-            name="bio"
-            id="bio-field"
-            required={false}
-            disabled={false}
-            readOnly={false}
-            autoFocus={false}
-            helperText="Keep it concise and friendly."
-            error={error}
-            showError={true}
-            onBlur={() => setError(bio.length > 0 && bio.length < 20 ? "Bio must be at least 20 characters." : "")}
-            onFocus={() => setError("")}
-            onKeyDown={(e) => console.log("key →", e.key)}
-            className=""
-            inputClassName=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   7. NumberField
-═══════════════════════════════════════════════════════════════ */
-export function NumberFieldExample() {
-    const [qty, setQty] = useState(1);
-    const [error, setError] = useState("");
-
-    return (
-        <NumberField
-            label="Quantity"
-            value={qty}
-            setValue={setQty}
-            onChange={(value, event) => console.log("qty →", value)}
-            min={1}
-            max={99}
-            step={1}
-            placeholder="0"
-            name="quantity"
-            id="qty-field"
-            required={true}
-            disabled={false}
-            helperText="Maximum 99 items per order"
-            error={error}
-            showError={true}
-            onBlur={() => setError(qty < 1 ? "Quantity must be at least 1." : "")}
-            onFocus={() => setError("")}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   8. SelectField
-═══════════════════════════════════════════════════════════════ */
-export function SelectFieldExample() {
-    const [country, setCountry] = useState("");
-    const [error, setError] = useState("");
-
-    return (
-        <SelectField
-            label="Country"
-            value={country}
-            setValue={setCountry}
-            onChange={(value, event) => console.log("country →", value)}
-            options={[
-                { value: "bd", label: "Bangladesh" },
-                { value: "us", label: "United States" },
-                { value: "gb", label: "United Kingdom" },
-                { value: "in", label: "India" },
-                { value: "de", label: "Germany", disabled: true },
-            ]}
-            placeholder="Select your country"
-            suggestions={[
-                { value: "bd", label: "Bangladesh" },
-                { value: "us", label: "United States" },
-            ]}
-            name="country"
-            id="country-field"
-            required={true}
-            disabled={false}
-            helperText="Select the country you reside in"
-            error={error}
-            showError={true}
-            onBlur={() => setError(!country ? "Please select a country." : "")}
-            onFocus={() => setError("")}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   9. SearchableSelect
-═══════════════════════════════════════════════════════════════ */
-export function SearchableSelectExample() {
-    const [framework, setFramework] = useState("");
-    const [error, setError] = useState("");
-
-    return (
-        <SearchableSelect
-            label="Framework"
-            value={framework}
-            setValue={setFramework}
-            onChange={(value, option) => console.log("framework →", value, option)}
-            options={[
-                { value: "react", label: "React", description: "Meta's UI library" },
-                { value: "vue", label: "Vue.js", description: "Progressive framework" },
-                { value: "svelte", label: "Svelte", description: "Cybernetically enhanced" },
-                { value: "angular", label: "Angular", description: "Google's full framework" },
-                { value: "solid", label: "SolidJS", description: "Fine-grained reactivity" },
-            ]}
-            placeholder="Search frameworks..."
-            suggestions={[
-                { value: "react", label: "React" },
-                { value: "vue", label: "Vue.js" },
-            ]}
-            name="framework"
-            id="framework-field"
-            required={true}
-            disabled={false}
-            clearable={true}
-            helperText="Select the primary frontend framework"
-            error={error}
-            showError={true}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   10. DateField
-═══════════════════════════════════════════════════════════════ */
-export function DateFieldExample() {
-    const [dob, setDob] = useState("");
-    const [error, setError] = useState("");
-
-    const today = new Date().toISOString().split("T")[0];
-    const minDate = "1900-01-01";
-
-    return (
-        <DateField
-            label="Date of Birth"
-            value={dob}
-            setValue={setDob}
-            onChange={(value, event) => console.log("dob →", value)}
-            min={minDate}
-            max={today}
-            name="dob"
-            id="dob-field"
-            required={true}
-            disabled={false}
-            helperText="You must be at least 18 years old"
-            error={error}
-            showError={true}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   11. TimeField
-═══════════════════════════════════════════════════════════════ */
-export function TimeFieldExample() {
-    const [time, setTime] = useState("");
-    const [error, setError] = useState("");
-
-    return (
-        <TimeField
-            label="Meeting Time"
-            value={time}
-            setValue={setTime}
-            onChange={(value, event) => console.log("time →", value)}
-            min="09:00"
-            max="17:00"
-            name="meetingTime"
-            id="time-field"
-            required={true}
-            disabled={false}
-            helperText="Business hours: 9 AM – 5 PM"
-            error={error}
-            showError={true}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   12. CalendarField
-═══════════════════════════════════════════════════════════════ */
-export function CalendarFieldExample() {
-    const [date, setDate] = useState("");
-    const [error, setError] = useState("");
-
-    const today = new Date().toISOString().split("T")[0];
-
-    return (
-        <CalendarField
-            label="Event Date"
-            value={date}
-            setValue={setDate}
-            onChange={(value) => console.log("date →", value)}
-            min={today}
-            max="2026-12-31"
-            placeholder="Pick a date"
-            name="eventDate"
-            id="calendar-field"
-            required={true}
-            disabled={false}
-            helperText="Select a future date for your event"
-            error={error}
-            showError={true}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   13. RadioGroup
-═══════════════════════════════════════════════════════════════ */
-export function RadioGroupExample() {
-    const [plan, setPlan] = useState("");
-    const [error, setError] = useState("");
-
-    return (
-        <RadioGroup
-            label="Subscription Plan"
-            value={plan}
-            setValue={setPlan}
-            onChange={(value) => console.log("plan →", value)}
-            options={[
-                { value: "free", label: "Free", description: "Basic features only" },
-                { value: "pro", label: "Pro", description: "All features, $9/mo" },
-                { value: "team", label: "Team", description: "For teams, $29/mo" },
-                { value: "enterprise", label: "Enterprise", description: "Custom pricing", disabled: true },
-            ]}
-            direction="vertical"          /* "vertical" | "horizontal" */
-            required={true}
-            disabled={false}
-            helperText="You can change your plan anytime"
-            error={error}
-            showError={true}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   14. CheckboxGroup
-═══════════════════════════════════════════════════════════════ */
-export function CheckboxGroupExample() {
-    const [skills, setSkills] = useState([]);
-    const [error, setError] = useState("");
-
-    return (
-        <CheckboxGroup
-            label="Tech Skills"
-            value={skills}
-            setValue={setSkills}
-            onChange={(values) => console.log("skills →", values)}
-            options={[
-                { value: "react", label: "React", description: "UI library" },
-                { value: "typescript", label: "TypeScript", description: "Typed JS" },
-                { value: "node", label: "Node.js", description: "Server-side JS" },
-                { value: "graphql", label: "GraphQL", description: "API query language" },
-                { value: "postgres", label: "PostgreSQL", description: "Relational DB", disabled: false },
-            ]}
-            direction="vertical"          /* "vertical" | "horizontal" */
-            min={1}
-            max={3}
-            required={true}
-            disabled={false}
-            helperText="Select up to 3 skills"
-            error={error}
-            showError={true}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   15. SwitchField
-═══════════════════════════════════════════════════════════════ */
-export function SwitchFieldExample() {
-    const [notify, setNotify] = useState(false);
-    const [darkMode, setDarkMode] = useState(true);
-
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {/* Switch on the right (default) */}
-            <SwitchField
-                label="Notifications"
-                switchLabel="Email notifications"
-                description="Receive product updates and announcements via email"
-                value={notify}
-                setValue={setNotify}
-                onChange={(value) => console.log("notify →", value)}
-                switchPosition="right"    /* "right" | "left" */
-                disabled={false}
-                helperText="You can unsubscribe anytime"
-                error=""
-                showError={true}
-                className=""
-            />
-
-            {/* Switch on the left */}
-            <SwitchField
-                label=""
-                switchLabel="Dark Mode"
-                description="Switch between light and dark theme"
-                value={darkMode}
-                setValue={setDarkMode}
-                onChange={(value) => console.log("darkMode →", value)}
-                switchPosition="left"
-                disabled={false}
-                helperText=""
-                error=""
-                showError={true}
-                className=""
-            />
-        </div>
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   16. TagsField
-═══════════════════════════════════════════════════════════════ */
-export function TagsFieldExample() {
-    const [tags, setTags] = useState(["Shopify", "Liquid"]);
-    const [error, setError] = useState("");
-
-    return (
-        <TagsField
-            label="Tech Stack"
-            value={tags}
-            setValue={setTags}
-            onChange={(values) => console.log("tags →", values)}
-            placeholder="Add a technology..."
-            max={8}
-            maxLength={30}
-            suggestions={["React", "TypeScript", "Node.js", "GraphQL", "Prisma", "MySQL"]}
-            validate={(tag) => {
-                if (tag.length < 2) return "Tag must be at least 2 characters.";
-                if (tags.includes(tag)) return "Tag already added.";
-                return null;
-            }}
-            disabled={false}
-            helperText="Press Enter or comma to add. Max 8 tags."
-            error={error}
-            showError={true}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   17. UrlField
-═══════════════════════════════════════════════════════════════ */
-export function UrlFieldExample() {
-    const [url, setUrl] = useState("");
-    const [error, setError] = useState("");
-
-    return (
-        <UrlField
-            label="Portfolio Website"
-            value={url}
-            setValue={setUrl}
-            onChange={(value, event) => console.log("url →", value)}
-            placeholder="https://yoursite.com"
-            showPreview={true}
-            name="portfolioUrl"
-            id="url-field"
-            required={false}
-            disabled={false}
-            maxLength={500}
-            helperText="Your public portfolio URL"
-            error={error}
-            showError={true}
-            className=""
-        />
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   18. ImagePickerField
-═══════════════════════════════════════════════════════════════ */
-export function ImagePickerFieldExample() {
-    const [avatar, setAvatar] = useState([]);
-    const [gallery, setGallery] = useState([]);
-
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            {/* Single image — avatar */}
-            <ImagePickerField
-                label="Profile Photo"
-                value={avatar}
-                setValue={setAvatar}
-                onChange={(files) => console.log("avatar →", files)}
-                multiple={false}
-                maxFiles={1}
-                maxSize={2 * 1024 * 1024}       /* 2 MB */
-                helperText="Max 2 MB. JPG or PNG."
-                error=""
-                showError={true}
-                disabled={false}
-                className=""
-                previewWidth="auto"
-                previewMode="list"              /* irrelevant in single mode */
-            />
-
-            {/* Multi image — grid view */}
-            <ImagePickerField
-                label="Gallery Images"
-                value={gallery}
-                setValue={setGallery}
-                onChange={(files) => console.log("gallery →", files)}
-                multiple={true}
-                maxFiles={8}
-                maxSize={5 * 1024 * 1024}       /* 5 MB */
-                helperText="Up to 8 images, max 5 MB each."
-                error=""
-                showError={true}
-                disabled={false}
-                className=""
-                previewWidth="auto"
-                previewMode="grid"              /* "list" | "grid" */
-            />
-        </div>
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   19. VideoPickerField
-═══════════════════════════════════════════════════════════════ */
-export function VideoPickerFieldExample() {
-    const [introVideo, setIntroVideo] = useState([]);
-    const [courseVideos, setCourseVideos] = useState([]);
-
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            {/* Single video */}
-            <VideoPickerField
-                label="Intro Video"
-                value={introVideo}
-                setValue={setIntroVideo}
-                onChange={(files) => console.log("intro video →", files)}
-                multiple={false}
-                maxFiles={1}
-                maxSize={100 * 1024 * 1024}     /* 100 MB */
-                helperText="Max 100 MB. MP4 recommended."
-                error=""
-                showError={true}
-                disabled={false}
-                className=""
-                previewWidth="auto"
-                previewMode="list"
-            />
-
-            {/* Multi video — list view */}
-            <VideoPickerField
-                label="Course Videos"
-                value={courseVideos}
-                setValue={setCourseVideos}
-                onChange={(files) => console.log("course videos →", files)}
-                multiple={true}
-                maxFiles={5}
-                maxSize={200 * 1024 * 1024}     /* 200 MB */
-                helperText="Up to 5 videos, max 200 MB each."
-                error=""
-                showError={true}
-                disabled={false}
-                className=""
-                previewWidth="auto"
-                previewMode="list"              /* "list" | "grid" */
-            />
-        </div>
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   20. FilePickerField
-═══════════════════════════════════════════════════════════════ */
-export function FilePickerFieldExample() {
-    const [resume, setResume] = useState([]);
-    const [attachments, setAttachments] = useState([]);
-
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            {/* Single file — resume */}
-            <FilePickerField
-                label="Resume / CV"
-                value={resume}
-                setValue={setResume}
-                onChange={(files) => console.log("resume →", files)}
-                accept=".pdf,.doc,.docx"
-                multiple={false}
-                maxFiles={1}
-                maxSize={5 * 1024 * 1024}       /* 5 MB */
-                helperText="PDF or Word document, max 5 MB"
-                error=""
-                showError={true}
-                disabled={false}
-                className=""
-                previewMode="list"
-            />
-
-            {/* Multi file — grid view */}
-            <FilePickerField
-                label="Attachments"
-                value={attachments}
-                setValue={setAttachments}
-                onChange={(files) => console.log("attachments →", files)}
-                accept=".pdf,.docx,.xlsx,.jpg,.png"
-                multiple={true}
-                maxFiles={5}
-                maxSize={10 * 1024 * 1024}      /* 10 MB */
-                helperText="Up to 5 files, max 10 MB each."
-                error=""
-                showError={true}
-                disabled={false}
-                className=""
-                previewMode="grid"              /* "list" | "grid" */
-            />
-        </div>
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   21. SearchField
-═══════════════════════════════════════════════════════════════ */
-export function SearchFieldExample() {
-    const [simpleQuery, setSimpleQuery] = useState("");
-    const [simpleResults, setSimpleResults] = useState([]);
-
-    const [richQuery, setRichQuery] = useState("");
-    const [richResults, setRichResults] = useState([]);
-    const [loading, setLoading] = useState(false);
-
-    /* Simple string search */
-    const handleSimpleSearch = (query) => {
-        const fruits = ["Apple", "Banana", "Blueberry", "Cherry", "Grape", "Mango", "Orange", "Pear", "Strawberry"];
-        setSimpleResults(fruits.filter((f) => f.toLowerCase().includes(query.toLowerCase())));
-    };
-
-    /* Rich object search — simulates async fetch */
-    const handleRichSearch = async (query) => {
-        setLoading(true);
-        await new Promise((r) => setTimeout(r, 600));   /* fake latency */
-        setRichResults(
-            MOCK_USERS.filter(
-                (u) =>
-                    u.name.toLowerCase().includes(query.toLowerCase()) ||
-                    u.email.toLowerCase().includes(query.toLowerCase())
-            )
-        );
-        setLoading(false);
-    };
-
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            {/* Simple — string array results */}
-            <SearchField
-                label="Search Fruits"
-                value={simpleQuery}
-                setValue={setSimpleQuery}
-                onChange={(value, event) => console.log("query →", value)}
-                onSearch={handleSimpleSearch}
-                results={simpleResults}
-                onSelect={(item) => console.log("selected →", item)}
-                resultFormat="simple"           /* "simple" | "rich" */
-                showInnerSearch={true}
-                popupMaxHeight={320}
-                loading={false}
-                placeholder="Search fruits..."
-                emptyText="No fruits found"
-                required={false}
-                disabled={false}
-                helperText="Press Enter or click the search button"
-                error=""
-                showError={true}
-                id="search-simple"
-                className=""
-            />
-
-            {/* Rich — object array results with avatar, name, description */}
-            <SearchField
-                label="Search Users"
-                value={richQuery}
-                setValue={setRichQuery}
-                onChange={(value, event) => console.log("user query →", value)}
-                onSearch={handleRichSearch}
-                results={richResults}
-                onSelect={(user) => console.log("selected user →", user)}
-                resultFormat="rich"
-                showInnerSearch={true}
-                popupMaxHeight={320}
-                loading={loading}
-                placeholder="Search by name or email..."
-                emptyText="No users found"
-                required={false}
-                disabled={false}
-                helperText="Results auto-detect name, email, and description fields"
-                error=""
-                showError={true}
-                id="search-rich"
-                className=""
-            />
-        </div>
-    );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Root demo — সব component এক পেজে
-═══════════════════════════════════════════════════════════════ */
-const DEMOS = [
-    { title: "FormFieldMessage", Component: FormFieldMessageExample },
-    { title: "TextField", Component: TextFieldExample },
-    { title: "EmailField", Component: EmailFieldExample },
-    { title: "PhoneField", Component: PhoneFieldExample },
-    { title: "PasswordField", Component: PasswordFieldExample },
-    { title: "TextArea", Component: TextAreaExample },
-    { title: "NumberField", Component: NumberFieldExample },
-    { title: "SelectField", Component: SelectFieldExample },
-    { title: "SearchableSelect", Component: SearchableSelectExample },
-    { title: "DateField", Component: DateFieldExample },
-    { title: "TimeField", Component: TimeFieldExample },
-    { title: "CalendarField", Component: CalendarFieldExample },
-    { title: "RadioGroup", Component: RadioGroupExample },
-    { title: "CheckboxGroup", Component: CheckboxGroupExample },
-    { title: "SwitchField", Component: SwitchFieldExample },
-    { title: "TagsField", Component: TagsFieldExample },
-    { title: "UrlField", Component: UrlFieldExample },
-    { title: "ImagePickerField", Component: ImagePickerFieldExample },
-    { title: "VideoPickerField", Component: VideoPickerFieldExample },
-    { title: "FilePickerField", Component: FilePickerFieldExample },
-    { title: "SearchField", Component: SearchFieldExample },
-];
-
-export default function FormFieldsUsageExamples() {
-    return (
-        <div style={{ maxWidth: 640, margin: "0 auto", padding: "2rem 1rem", display: "flex", flexDirection: "column", gap: "2.5rem" }}>
-            {DEMOS.map(({ title, Component }, i) => (
-                <section key={title}>
-                    <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: ".06em", textTransform: "uppercase", color: "#888", marginBottom: "0.75rem" }}>
-                        {i + 1}. {title}
-                    </p>
-                    <Component />
-                </section>
-            ))}
-        </div>
-    );
+    </div>
+  );
 }
